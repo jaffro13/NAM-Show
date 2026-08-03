@@ -227,6 +227,34 @@ nav.main-nav a.cta:hover { background: var(--gold-light); }
   color: var(--ink-soft);
   margin-top: 2px;
 }
+.directions-link {
+  display: inline-block;
+  margin-top: 10px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  color: var(--gold-text);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+.directions-link:hover { border-bottom-color: var(--gold-text); }
+
+/* ---------- Map ---------- */
+.map-section { background: var(--paper-warm); border-bottom: 1px solid #DADFE3; }
+.map-embed {
+  width: 100%;
+  aspect-ratio: 16 / 6;
+  max-height: 320px;
+  border: 1px solid #DADFE3;
+  margin: 20px 0;
+  overflow: hidden;
+}
+.map-embed iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
 
 /* ---------- Sections ---------- */
 section.content {
@@ -461,6 +489,7 @@ footer.site-footer {
   .card-grid { grid-template-columns: 1fr; }
   .gallery-grid { grid-template-columns: 1fr 1fr; }
   .footer-grid { flex-direction: column; }
+  .map-embed { aspect-ratio: 4 / 3; max-height: 280px; }
 }
 @media (max-width: 480px) {
   .steps { grid-template-columns: 1fr; }
