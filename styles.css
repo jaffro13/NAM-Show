@@ -158,6 +158,12 @@ nav.main-nav a.cta:hover { background: var(--gold-light); }
   justify-content: center;
   flex-wrap: wrap;
 }
+.hero-note {
+  margin-top: 20px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: #9FB0BD;
+}
 
 /* ---------- Buttons ---------- */
 .btn {
@@ -311,12 +317,51 @@ section.content {
 }
 .step p { font-size: 14px; color: var(--ink-soft); }
 
-/* ---------- Fee spec table ---------- */
-.fee-table {
+/* ---------- Schedule table ---------- */
+.schedule-table {
   margin-top: 20px;
   border: 1px solid #DADFE3;
   background: #fff;
-  max-width: 480px;
+  max-width: 640px;
+}
+.schedule-row {
+  display: flex;
+  gap: 20px;
+  padding: 14px 18px;
+  border-bottom: 1px solid #EDEFF0;
+  align-items: baseline;
+}
+.schedule-row:last-child { border-bottom: none; }
+.schedule-row.highlight { background: var(--paper-warm); }
+.schedule-row .time {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--navy);
+  font-size: 14px;
+  flex-shrink: 0;
+  width: 150px;
+}
+.schedule-row .what { font-size: 14px; color: var(--ink-soft); }
+
+/* ---------- Fee spec table ---------- */
+.fee-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  margin-top: 20px;
+  align-items: start;
+}
+.fee-table-title {
+  font-family: var(--font-display);
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--navy);
+  margin-bottom: 10px;
+}
+.fee-table {
+  border: 1px solid #DADFE3;
+  background: #fff;
 }
 .fee-row {
   display: flex;
@@ -331,6 +376,59 @@ section.content {
 .fee-row .value { color: var(--navy); font-weight: 700; }
 .fee-row.highlight { background: var(--paper-warm); }
 .fee-row.free .value { color: var(--good); }
+.fee-note {
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.card-contact {
+  margin-top: 12px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-soft);
+  padding-top: 10px;
+  border-top: 1px solid #EDEFF0;
+}
+.card-contact a { color: var(--navy); text-decoration: underline; }
+
+/* ---------- Competition classes list ---------- */
+.classes-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 32px;
+  margin-top: 24px;
+}
+.class-row {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 9px 0;
+  border-bottom: 1px solid #EDEFF0;
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+.class-num {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--navy);
+  width: 26px;
+  flex-shrink: 0;
+}
+.classes-footnote {
+  margin-top: 14px;
+  font-size: 12px;
+  color: var(--ink-soft);
+  font-style: italic;
+}
+.classes-rules {
+  margin-top: 18px;
+  padding: 16px 18px;
+  background: var(--paper-warm);
+  border-left: 3px solid var(--gold);
+  font-size: 13px;
+  color: var(--ink-soft);
+  max-width: 720px;
+}
 
 /* ---------- Info cards (charity / classes / trade tables) ---------- */
 .card-grid {
@@ -490,6 +588,10 @@ footer.site-footer {
   .gallery-grid { grid-template-columns: 1fr 1fr; }
   .footer-grid { flex-direction: column; }
   .map-embed { aspect-ratio: 4 / 3; max-height: 280px; }
+  .fee-columns { grid-template-columns: 1fr; gap: 24px; }
+  .classes-grid { grid-template-columns: 1fr; }
+  .schedule-row { flex-direction: column; gap: 4px; }
+  .schedule-row .time { width: auto; }
 }
 @media (max-width: 480px) {
   .steps { grid-template-columns: 1fr; }
