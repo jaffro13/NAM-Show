@@ -419,6 +419,13 @@ section.content {
   margin-top: 20px;
   margin-bottom: 10px;
 }
+.photo-pair.small {
+  max-width: 420px;
+}
+.photo-pair.small .gallery-tile {
+  aspect-ratio: 4 / 3;
+  max-height: 140px;
+}
 .class-num {
   font-family: var(--font-mono);
   font-weight: 700;
