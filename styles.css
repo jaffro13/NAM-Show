@@ -316,6 +316,7 @@ section.content {
   margin-bottom: 8px;
 }
 .step p { font-size: 14px; color: var(--ink-soft); }
+.step p a { color: var(--navy); font-weight: 600; text-decoration: underline; text-decoration-color: var(--gold); }
 
 /* ---------- Schedule table ---------- */
 .schedule-table {
@@ -398,6 +399,10 @@ section.content {
   gap: 4px 32px;
   margin-top: 24px;
 }
+.classes-grid.vertical {
+  grid-template-columns: 1fr;
+  max-width: 640px;
+}
 .class-row {
   display: flex;
   align-items: baseline;
@@ -406,6 +411,13 @@ section.content {
   border-bottom: 1px solid #EDEFF0;
   font-size: 14px;
   color: var(--ink-soft);
+}
+.photo-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 20px;
+  margin-bottom: 10px;
 }
 .class-num {
   font-family: var(--font-mono);
