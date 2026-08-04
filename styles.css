@@ -136,6 +136,15 @@ nav.main-nav a.cta:hover { background: var(--gold-light); }
   color: #DCAB2C;
   margin-bottom: 18px;
 }
+.hero .hero-subtitle {
+  font-family: var(--font-display);
+  font-size: clamp(20px, 3.5vw, 28px);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #fff;
+  margin-bottom: 8px;
+}
+.hero .hero-subtitle .accent { color: var(--gold); }
 .hero h1 {
   font-family: var(--font-display);
   font-size: clamp(34px, 7vw, 62px);
