@@ -35,6 +35,16 @@
 
 <div class="ruler"></div>
 
+<section class="content" style="padding-bottom:0;">
+  <div class="wrap">
+    <div class="sponsorship-info">
+      <strong>Want to sponsor a class?</strong> It's $30 per class, and every dollar goes directly
+      towards trophy costs for the show. Just click "Sponsor this class" next to any class without
+      a sponsor below to apply - we'll be in touch to confirm details and arrange payment.
+    </div>
+  </div>
+</section>
+
 <section class="content">
   <div class="wrap">
     <div class="classes-grid vertical" style="grid-template-columns: 1fr;">
@@ -66,15 +76,6 @@
     <p class="classes-footnote">*Imagination meets Engineering, in honour of Peter Knight.</p>
     <p class="classes-footnote">***Modified diecast can be any diecast model that has been modified in some way (paint, addons, etc). If possible, please provide a photo of the original model before the modifications, to display alongside your model.</p>
     <p class="classes-rules">Models may be entered in one class only. All models are eligible for Best in Show and People's Choice. Australian subjects are automatically eligible for the Simon Breust Memorial Trophy. Trophies are awarded for 1st place in each class, People's Choice, Best in Show, and the Simon Breust Memorial Trophy. 2nd and 3rd place in each class receive a certificate.</p>
-
-    <div id="sponsorContactModal" class="sponsor-modal" style="display:none;">
-      <div class="sponsor-modal-card">
-        <h3>Sponsor a Class</h3>
-        <p>Interested in sponsoring <strong id="sponsorClassName"></strong>? Get in touch:</p>
-        <p class="sponsor-contact">Don Williams &middot; 0417 004 118 &middot; <a href="mailto:dedon351@gmail.com">dedon351@gmail.com</a></p>
-        <button id="sponsorModalClose" class="btn btn-outline-dark">Close</button>
-      </div>
-    </div>
   </div>
 </section>
 
@@ -107,11 +108,6 @@
 </footer>
 
 <script>
-  const modal = document.getElementById('sponsorContactModal');
-  const modalClassName = document.getElementById('sponsorClassName');
-  document.getElementById('sponsorModalClose').onclick = () => { modal.style.display = 'none'; };
-  modal.onclick = (e) => { if (e.target === modal) modal.style.display = 'none'; };
-
   fetch('data/sponsors.json?v=' + Date.now())
     .then(r => r.json())
     .then(sponsors => {
@@ -123,14 +119,13 @@
         if (sponsorName) {
           slot.innerHTML = ` &mdash; <span class="sponsor-name">Sponsored by: ${sponsorName}</span>`;
         } else {
-          const btn = document.createElement('button');
-          btn.className = 'sponsor-btn';
-          btn.textContent = 'Sponsor this class';
-          btn.onclick = () => {
-            modalClassName.textContent = classNum + ' - ' + title;
-            modal.style.display = 'flex';
-          };
-          slot.appendChild(btn);
+          const link = document.createElement('a');
+          link.className = 'sponsor-btn';
+          link.textContent = 'Sponsor this class';
+          link.href = `sponsor.html?class=${encodeURIComponent(classNum)}&className=${encodeURIComponent(title)}`;
+          link.target = '_blank';
+          link.rel = 'noopener';
+          slot.appendChild(link);
         }
       });
     })

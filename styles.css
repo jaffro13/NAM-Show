@@ -467,6 +467,8 @@ section.content {
   font-weight: 700;
 }
 .sponsor-btn {
+  display: inline-block;
+  text-decoration: none;
   margin-left: 10px;
   font-family: var(--font-mono);
   font-size: 11px;
@@ -478,6 +480,15 @@ section.content {
   cursor: pointer;
 }
 .sponsor-btn:hover { border-color: var(--gold); color: var(--gold-text); }
+.sponsorship-info {
+  background: var(--paper-warm);
+  border-left: 3px solid var(--gold);
+  border-radius: 4px;
+  padding: 14px 18px;
+  font-size: 14px;
+  color: var(--ink-soft);
+  max-width: 720px;
+}
 .sponsor-modal {
   position: fixed;
   inset: 0;

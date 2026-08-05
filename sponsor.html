@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sponsor a Class - Northern Area Modellers</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100vh; height: 100dvh; overflow: hidden; background: #F4F6F7; }
+    iframe { width: 100%; height: 100%; border: none; display: block; }
+  </style>
+</head>
+<body>
+  <iframe id="sponsorFrame" title="Sponsor a Class - Northern Area Modellers"></iframe>
+  <script>
+    // Forwards this page's own query string (?class=05&className=Armour...) straight through to
+    // the Apps Script form, so the "Sponsor this class" button on the Classes page can just link
+    // here with the class info attached, same as it would to the raw exec URL.
+    var baseUrl = 'https://script.google.com/macros/s/AKfycbx9rWcvIJVCHZPO5WJJquYe2lSLPuKaSUTWG0t7qMIXeEUlW9jbF-drUJQZFNHfkqg9/exec';
+    var params = new URLSearchParams(window.location.search);
+    params.set('mode', 'sponsor');
+    document.getElementById('sponsorFrame').src = baseUrl + '?' + params.toString();
+  </script>
+</body>
+</html>
