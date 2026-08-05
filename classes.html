@@ -109,7 +109,7 @@
 </footer>
 
 <script>
-  fetch('data/sponsors.json?v=' + Date.now())
+  fetch('data/sponsors.json?v=' + Date.now(), { cache: 'no-store' })
     .then(r => r.json())
     .then(sponsors => {
       document.querySelectorAll('.class-row').forEach(row => {
