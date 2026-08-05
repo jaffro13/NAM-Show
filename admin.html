@@ -71,6 +71,15 @@
     cursor: pointer;
   }
   .year-tab.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .year-highlights-heading {
+    font-family: var(--font-display);
+    font-size: 15px;
+    text-transform: uppercase;
+    color: var(--navy);
+    margin: 20px 0 6px 0;
+    padding-top: 16px;
+    border-top: 1px solid #EDEFF0;
+  }
   .photo-admin-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px; }
   .photo-admin-tile { position: relative; border: 1px solid #DADFE3; border-radius: 4px; overflow: hidden; }
   .photo-admin-tile img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; }
@@ -167,14 +176,6 @@
     <div id="sponsorsStatus" class="admin-status"></div>
   </div>
 
-  <!-- ================= SHOW HIGHLIGHTS ================= -->
-  <div class="admin-card">
-    <h2>Show Highlights</h2>
-    <p class="hint">The three featured photos shown at the top of the Gallery page. Uploading a new photo for a slot replaces whatever was there before.</p>
-    <div id="highlightsAdminGrid" class="highlights-admin-grid"></div>
-    <div id="highlightsStatus" class="admin-status"></div>
-  </div>
-
   <!-- ================= GALLERY ================= -->
   <div class="admin-card">
     <h2>Gallery Photos</h2>
@@ -190,20 +191,30 @@
 
     <div id="yearTabs" class="year-tabs" style="margin-top:20px;"></div>
 
-    <div class="upload-row">
-      <div class="field-row">
-        <label for="photoFileInput">Choose Photo(s)</label>
-        <input type="file" id="photoFileInput" accept="image/*" multiple>
-      </div>
-      <div class="field-row">
-        <label for="photoCaptionInput">Caption (optional - only applies when uploading a single photo)</label>
-        <input type="text" id="photoCaptionInput" placeholder="e.g. Best in Show 2025">
-      </div>
-      <button class="admin-btn" id="uploadPhotoBtn">Upload Photo</button>
-    </div>
-    <div id="galleryStatus" class="admin-status"></div>
+    <div id="noYearSelectedMsg" style="display:none; color:var(--ink-soft); font-size:13px;">Add or select a year above to manage its photos.</div>
 
-    <div id="photoGrid" class="photo-admin-grid"></div>
+    <div id="yearDetailSection" style="display:none;">
+      <h3 class="year-highlights-heading">Trophy Winners for <span id="currentYearLabel"></span></h3>
+      <p class="hint">The three featured photos shown at the top of this year's gallery. Uploading a new photo for a slot replaces whatever was there before.</p>
+      <div id="highlightsAdminGrid" class="highlights-admin-grid"></div>
+      <div id="highlightsStatus" class="admin-status"></div>
+
+      <h3 class="year-highlights-heading" style="margin-top:28px;">Other Photos for <span id="currentYearLabel2"></span></h3>
+      <div class="upload-row">
+        <div class="field-row">
+          <label for="photoFileInput">Choose Photo(s)</label>
+          <input type="file" id="photoFileInput" accept="image/*" multiple>
+        </div>
+        <div class="field-row">
+          <label for="photoCaptionInput">Caption (optional - only applies when uploading a single photo)</label>
+          <input type="text" id="photoCaptionInput" placeholder="e.g. Best in Show 2025">
+        </div>
+        <button class="admin-btn" id="uploadPhotoBtn">Upload Photo</button>
+      </div>
+      <div id="galleryStatus" class="admin-status"></div>
+
+      <div id="photoGrid" class="photo-admin-grid"></div>
+    </div>
   </div>
 
 </div>
@@ -374,7 +385,7 @@
   // ============================================================
   // Gallery
   // ============================================================
-  let galleryData = { highlights: {}, years: [] };
+  let galleryData = { years: [] };
   let gallerySha = null;
   let currentYear = null;
   const highlightSlots = [
@@ -383,29 +394,52 @@
     { key: 'simonBreust', label: 'Simon Breust Memorial Trophy' }
   ];
 
+  function getCurrentYearEntry() {
+    return galleryData.years.find(y => y.year === currentYear);
+  }
+
   async function loadGallery() {
     try {
       const file = await ghGetFile('data/gallery.json');
-      galleryData = file.exists ? JSON.parse(file.content) : { highlights: {}, years: [] };
-      if (!galleryData.highlights) galleryData.highlights = {};
+      galleryData = file.exists ? JSON.parse(file.content) : { years: [] };
+      if (!galleryData.years) galleryData.years = [];
       gallerySha = file.sha;
       if (!currentYear && galleryData.years.length > 0) {
         currentYear = [...galleryData.years].sort((a, b) => b.year.localeCompare(a.year))[0].year;
       }
-      renderHighlightsAdmin();
       renderYearTabs();
-      renderPhotoGrid();
+      renderYearDetail();
     } catch (err) {
       document.getElementById('galleryStatus').className = 'admin-status error';
       document.getElementById('galleryStatus').textContent = 'Error loading gallery: ' + err.message;
     }
   }
 
+  function renderYearDetail() {
+    const yearEntry = getCurrentYearEntry();
+    const detailSection = document.getElementById('yearDetailSection');
+    const noYearMsg = document.getElementById('noYearSelectedMsg');
+    if (!yearEntry) {
+      detailSection.style.display = 'none';
+      noYearMsg.style.display = 'block';
+      return;
+    }
+    detailSection.style.display = 'block';
+    noYearMsg.style.display = 'none';
+    document.getElementById('currentYearLabel').textContent = yearEntry.year;
+    document.getElementById('currentYearLabel2').textContent = yearEntry.year;
+    if (!yearEntry.highlights) yearEntry.highlights = {};
+    renderHighlightsAdmin();
+    renderPhotoGrid();
+  }
+
   function renderHighlightsAdmin() {
     const grid = document.getElementById('highlightsAdminGrid');
     grid.innerHTML = '';
+    const yearEntry = getCurrentYearEntry();
+    if (!yearEntry) return;
     highlightSlots.forEach(slot => {
-      const entry = galleryData.highlights[slot.key] || {};
+      const entry = (yearEntry.highlights || {})[slot.key] || {};
       const card = document.createElement('div');
       card.className = 'highlight-admin-card';
       card.innerHTML = `
@@ -428,13 +462,16 @@
     const captionInput = card.querySelector('.highlight-caption-input');
     const btn = card.querySelector('.highlight-upload-btn');
     const caption = captionInput.value.trim();
+    const yearEntry = getCurrentYearEntry();
+    if (!yearEntry) return;
+    if (!yearEntry.highlights) yearEntry.highlights = {};
 
     if (!fileInput.files.length) {
       // No new photo chosen - just update the caption on the existing photo, if any.
-      if (galleryData.highlights[slotKey] && galleryData.highlights[slotKey].src) {
-        galleryData.highlights[slotKey].caption = caption;
+      if (yearEntry.highlights[slotKey] && yearEntry.highlights[slotKey].src) {
+        yearEntry.highlights[slotKey].caption = caption;
         try {
-          await saveGalleryData('Update caption for ' + slotKey);
+          await saveGalleryData('Update caption for ' + slotKey + ' (' + yearEntry.year + ')');
           statusEl.className = 'admin-status ok';
           statusEl.textContent = 'Caption updated.';
         } catch (err) {
@@ -454,11 +491,11 @@
     statusEl.textContent = 'Resizing and uploading...';
     try {
       const base64 = await resizeImageFile(fileInput.files[0], 1600);
-      const filename = `highlight-${slotKey}-${Date.now()}.jpg`;
+      const filename = `highlight-${yearEntry.year}-${slotKey}-${Date.now()}.jpg`;
       const path = `images/${filename}`;
-      await ghPutBinaryFile(path, base64, `Update ${slotKey} highlight photo`);
-      galleryData.highlights[slotKey] = { src: path, caption };
-      await saveGalleryData('Update ' + slotKey + ' highlight photo');
+      await ghPutBinaryFile(path, base64, `Update ${slotKey} highlight photo for ${yearEntry.year}`);
+      yearEntry.highlights[slotKey] = { src: path, caption };
+      await saveGalleryData('Update ' + slotKey + ' highlight photo for ' + yearEntry.year);
       statusEl.className = 'admin-status ok';
       statusEl.textContent = 'Uploaded - live on the site within about a minute.';
       renderHighlightsAdmin();
@@ -479,7 +516,7 @@
       const tab = document.createElement('button');
       tab.className = 'year-tab' + (y.year === currentYear ? ' active' : '');
       tab.textContent = y.year;
-      tab.onclick = () => { currentYear = y.year; renderYearTabs(); renderPhotoGrid(); };
+      tab.onclick = () => { currentYear = y.year; renderYearTabs(); renderYearDetail(); };
       tabsEl.appendChild(tab);
     });
     if (years.length === 0) {
@@ -534,15 +571,15 @@
     if (galleryData.years.some(y => y.year === year)) {
       currentYear = year;
       renderYearTabs();
-      renderPhotoGrid();
+      renderYearDetail();
       input.value = '';
       return;
     }
-    galleryData.years.push({ year, photos: [] });
+    galleryData.years.push({ year, highlights: {}, photos: [] });
     currentYear = year;
     input.value = '';
     renderYearTabs();
-    renderPhotoGrid();
+    renderYearDetail();
     saveGalleryData('Add ' + year + ' gallery year');
   };
 
