@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin - Northern Area Modellers</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+  .admin-wrap { max-width: 760px; margin: 0 auto; padding: 32px 20px 80px 20px; }
+  .admin-card {
+    background: #fff;
+    border: 1px solid #DADFE3;
+    border-radius: 6px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+  .admin-card h2 {
+    font-family: var(--font-display);
+    font-size: 20px;
+    text-transform: uppercase;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+  .admin-card p.hint { font-size: 13px; color: var(--ink-soft); margin-bottom: 16px; }
+  .field-row { margin-bottom: 12px; }
+  .field-row label { display: block; font-size: 12px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+  .field-row input[type=text], .field-row input[type=password], .field-row select {
+    width: 100%;
+    padding: 9px 10px;
+    font-size: 14px;
+    border: 1px solid #C9D2D8;
+    border-radius: 4px;
+  }
+  .admin-btn {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-weight: 600;
+    font-size: 13px;
+    padding: 9px 18px;
+    border-radius: 4px;
+    border: none;
+    background: var(--gold);
+    color: #12181F;
+    cursor: pointer;
+  }
+  .admin-btn:disabled { background: #ccc; color: #777; cursor: default; }
+  .admin-btn.secondary { background: transparent; border: 2px solid var(--navy); color: var(--navy); }
+  .admin-status { margin-top: 10px; font-size: 13px; }
+  .admin-status.ok { color: var(--good); }
+  .admin-status.error { color: #C0392B; }
+  .conn-badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 700; }
+  .conn-badge.connected { background: #D5F5E3; color: #1E8449; }
+  .conn-badge.disconnected { background: #FADBD8; color: #C0392B; }
+  .sponsor-admin-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid #EDEFF0; }
+  .sponsor-admin-row .cnum { font-family: var(--font-mono); font-weight: 700; color: var(--navy); width: 26px; flex-shrink: 0; }
+  .sponsor-admin-row .ctitle { flex: 0 0 220px; font-size: 13px; color: var(--ink-soft); }
+  .sponsor-admin-row input { flex: 1; padding: 6px 8px; font-size: 13px; border: 1px solid #C9D2D8; border-radius: 4px; }
+  .year-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+  .year-tab {
+    padding: 6px 14px;
+    border-radius: 4px;
+    border: 1px solid #C9D2D8;
+    background: #fff;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .year-tab.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .photo-admin-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px; }
+  .photo-admin-tile { position: relative; border: 1px solid #DADFE3; border-radius: 4px; overflow: hidden; }
+  .photo-admin-tile img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; }
+  .photo-admin-tile .remove-photo-btn {
+    position: absolute; top: 4px; right: 4px;
+    background: rgba(192,57,43,0.9); color: #fff; border: none; border-radius: 3px;
+    font-size: 11px; padding: 2px 6px; cursor: pointer;
+  }
+  .upload-row { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; margin-top: 16px; }
+  .upload-row .field-row { margin-bottom: 0; flex: 1; min-width: 160px; }
+  .highlights-admin-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 16px; }
+  .highlight-admin-card { border: 1px solid #DADFE3; border-radius: 6px; padding: 12px; }
+  .highlight-admin-label { font-size: 12px; font-weight: 700; color: var(--navy); margin-bottom: 8px; text-align: center; }
+  .highlight-admin-preview {
+    aspect-ratio: 4/3;
+    background: #F4F6F7;
+    border: 1px dashed #C9D2D8;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+  .highlight-admin-preview img { width: 100%; height: 100%; object-fit: cover; }
+  .highlight-admin-preview .placeholder-mark { font-size: 22px; color: #C9D2D8; }
+  .highlight-file-input { width: 100%; font-size: 12px; margin-bottom: 6px; }
+  .highlight-caption-input { width: 100%; padding: 6px 8px; font-size: 12px; border: 1px solid #C9D2D8; border-radius: 4px; }
+  .caption-edit-row { display: flex; gap: 4px; padding: 6px; background: #F8F9FA; }
+  .caption-edit-input { flex: 1; padding: 4px 6px; font-size: 11px; border: 1px solid #C9D2D8; border-radius: 3px; }
+  .caption-save-btn {
+    background: var(--navy); color: #fff; border: none; border-radius: 3px;
+    font-size: 11px; padding: 4px 8px; cursor: pointer;
+  }
+  .photo-admin-tile { display: flex; flex-direction: column; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap nav-row">
+    <a href="index.html" class="brand">Northern Area <span>Modellers</span></a>
+    <nav class="main-nav">
+      <a href="index.html">Back to Site</a>
+    </nav>
+  </div>
+</header>
+
+<div class="admin-wrap">
+
+  <h1 style="font-family:var(--font-display);color:var(--navy);text-transform:uppercase;margin:24px 0 4px 0;">Site Admin</h1>
+  <p style="color:var(--ink-soft);font-size:14px;margin-bottom:24px;">Manage gallery photos and class sponsors. Changes go live on the site within about a minute.</p>
+
+  <!-- ================= CONNECTION SETTINGS ================= -->
+  <div class="admin-card">
+    <h2>Connection</h2>
+    <p class="hint">
+      Needs a GitHub Personal Access Token to save changes. This stays only in this browser -
+      it's never uploaded or shared anywhere except directly to GitHub.
+      <a href="https://github.com/settings/tokens" target="_blank" rel="noopener">Open GitHub token settings</a>
+      &rarr; "Fine-grained tokens" tab &rarr; Generate new token &rarr; under "Repository access" choose
+      "Only select repositories" and pick this one &rarr; under "Permissions" set "Contents" to
+      "Read and write".
+    </p>
+    <div class="field-row">
+      <label for="ghToken">Personal Access Token</label>
+      <input type="password" id="ghToken" placeholder="github_pat_...">
+    </div>
+    <div class="field-row" style="display:flex; gap:12px;">
+      <div style="flex:1;">
+        <label for="ghOwner">Repository Owner</label>
+        <input type="text" id="ghOwner" placeholder="e.g. jaffro13">
+      </div>
+      <div style="flex:1;">
+        <label for="ghRepo">Repository Name</label>
+        <input type="text" id="ghRepo" placeholder="e.g. NAM-show">
+      </div>
+      <div style="flex:0 0 100px;">
+        <label for="ghBranch">Branch</label>
+        <input type="text" id="ghBranch" placeholder="main">
+      </div>
+    </div>
+    <button class="admin-btn" id="saveSettingsBtn">Save &amp; Test Connection</button>
+    <span id="connBadge" class="conn-badge disconnected" style="margin-left:10px;">Not connected</span>
+    <div id="settingsStatus" class="admin-status"></div>
+  </div>
+
+  <!-- ================= SPONSORS ================= -->
+  <div class="admin-card">
+    <h2>Class Sponsors</h2>
+    <p class="hint">Type a sponsor's name against any class, or leave blank for no sponsor. Click Save once you're done.</p>
+    <div id="sponsorsList">Loading...</div>
+    <button class="admin-btn" id="saveSponsorsBtn" style="margin-top:14px;">Save Sponsors</button>
+    <div id="sponsorsStatus" class="admin-status"></div>
+  </div>
+
+  <!-- ================= SHOW HIGHLIGHTS ================= -->
+  <div class="admin-card">
+    <h2>Show Highlights</h2>
+    <p class="hint">The three featured photos shown at the top of the Gallery page. Uploading a new photo for a slot replaces whatever was there before.</p>
+    <div id="highlightsAdminGrid" class="highlights-admin-grid"></div>
+    <div id="highlightsStatus" class="admin-status"></div>
+  </div>
+
+  <!-- ================= GALLERY ================= -->
+  <div class="admin-card">
+    <h2>Gallery Photos</h2>
+    <p class="hint">Organise photos by show year. Add a new year, then upload photos into it. Photos are automatically resized for the web.</p>
+
+    <div class="upload-row">
+      <div class="field-row">
+        <label for="newYearInput">Add a New Year</label>
+        <input type="text" id="newYearInput" placeholder="e.g. 2024">
+      </div>
+      <button class="admin-btn secondary" id="addYearBtn">Add Year</button>
+    </div>
+
+    <div id="yearTabs" class="year-tabs" style="margin-top:20px;"></div>
+
+    <div class="upload-row">
+      <div class="field-row">
+        <label for="photoFileInput">Choose Photo(s)</label>
+        <input type="file" id="photoFileInput" accept="image/*" multiple>
+      </div>
+      <div class="field-row">
+        <label for="photoCaptionInput">Caption (optional - only applies when uploading a single photo)</label>
+        <input type="text" id="photoCaptionInput" placeholder="e.g. Best in Show 2025">
+      </div>
+      <button class="admin-btn" id="uploadPhotoBtn">Upload Photo</button>
+    </div>
+    <div id="galleryStatus" class="admin-status"></div>
+
+    <div id="photoGrid" class="photo-admin-grid"></div>
+  </div>
+
+</div>
+
+<script>
+  // ============================================================
+  // Settings (stored only in this browser's localStorage)
+  // ============================================================
+  const settingsKeys = ['ghToken', 'ghOwner', 'ghRepo', 'ghBranch'];
+  settingsKeys.forEach(key => {
+    const saved = localStorage.getItem('nam_admin_' + key);
+    if (saved) document.getElementById(key).value = saved;
+  });
+  if (!document.getElementById('ghBranch').value) document.getElementById('ghBranch').value = 'main';
+
+  function getSettings() {
+    return {
+      token: document.getElementById('ghToken').value.trim(),
+      owner: document.getElementById('ghOwner').value.trim(),
+      repo: document.getElementById('ghRepo').value.trim(),
+      branch: document.getElementById('ghBranch').value.trim() || 'main'
+    };
+  }
+
+  // ============================================================
+  // GitHub Contents API helpers
+  // ============================================================
+  async function ghRequest(path, options = {}) {
+    const s = getSettings();
+    const url = `https://api.github.com/repos/${s.owner}/${s.repo}/contents/${path}`;
+    const resp = await fetch(url, {
+      ...options,
+      headers: {
+        'Authorization': `token ${s.token}`,
+        'Accept': 'application/vnd.github+json',
+        ...(options.headers || {})
+      }
+    });
+    return resp;
+  }
+
+  async function ghGetFile(path) {
+    const resp = await ghRequest(`${path}?ref=${getSettings().branch}`);
+    if (resp.status === 404) return { exists: false, content: null, sha: null };
+    if (!resp.ok) throw new Error(`GitHub error ${resp.status} reading ${path}`);
+    const data = await resp.json();
+    const content = decodeURIComponent(escape(atob(data.content.replace(/\n/g, ''))));
+    return { exists: true, content, sha: data.sha };
+  }
+
+  async function ghPutFile(path, contentString, sha, message) {
+    const s = getSettings();
+    const b64 = btoa(unescape(encodeURIComponent(contentString)));
+    const body = { message, content: b64, branch: s.branch };
+    if (sha) body.sha = sha;
+    const resp = await ghRequest(path, { method: 'PUT', body: JSON.stringify(body) });
+    if (!resp.ok) {
+      const errData = await resp.json().catch(() => ({}));
+      throw new Error(errData.message || `GitHub error ${resp.status} writing ${path}`);
+    }
+    return resp.json();
+  }
+
+  async function ghPutBinaryFile(path, base64Content, message) {
+    const s = getSettings();
+    const body = { message, content: base64Content, branch: s.branch };
+    const resp = await ghRequest(path, { method: 'PUT', body: JSON.stringify(body) });
+    if (!resp.ok) {
+      const errData = await resp.json().catch(() => ({}));
+      throw new Error(errData.message || `GitHub error ${resp.status} writing ${path}`);
+    }
+    return resp.json();
+  }
+
+  // ============================================================
+  // Connection test
+  // ============================================================
+  document.getElementById('saveSettingsBtn').onclick = async () => {
+    settingsKeys.forEach(key => {
+      localStorage.setItem('nam_admin_' + key, document.getElementById(key).value.trim());
+    });
+    const statusEl = document.getElementById('settingsStatus');
+    const badge = document.getElementById('connBadge');
+    statusEl.className = 'admin-status';
+    statusEl.textContent = 'Testing connection...';
+    try {
+      const s = getSettings();
+      const resp = await fetch(`https://api.github.com/repos/${s.owner}/${s.repo}`, {
+        headers: { 'Authorization': `token ${s.token}`, 'Accept': 'application/vnd.github+json' }
+      });
+      if (!resp.ok) throw new Error(`Could not access repository (status ${resp.status}). Check your token and repo details.`);
+      badge.className = 'conn-badge connected';
+      badge.textContent = 'Connected';
+      statusEl.className = 'admin-status ok';
+      statusEl.textContent = 'Connected successfully.';
+      loadSponsors();
+      loadGallery();
+    } catch (err) {
+      badge.className = 'conn-badge disconnected';
+      badge.textContent = 'Not connected';
+      statusEl.className = 'admin-status error';
+      statusEl.textContent = err.message;
+    }
+  };
+
+  // ============================================================
+  // Sponsors
+  // ============================================================
+  const classList = [
+    ['01','Junior/Intermediate (up to 17yrs)'], ['02','Aircraft Small (1/72 to smaller)'],
+    ['03','Aircraft Medium (1/48 to 1/71)'], ['04','Aircraft Large (1/47 or Larger)'],
+    ['05','Armour - 1/35'], ['06','Armour - 1/72 to 1/48'],
+    ['07',"Civil Vehicles - Pre 1950's"], ['08',"Civil Vehicles - Post 1950's"],
+    ['09',"Civil Vehicles - Post 1990's"], ['10','Competition Cars'],
+    ['11','Modified Diecast'], ['12','Dioramas & Vignettes'],
+    ['13','Figures and Busts'], ['14','Gundam & Mecha'],
+    ['15','Imagineering'], ['16','Ladies Class'],
+    ['17','Miscellaneous'], ['18','Military Vehicles'],
+    ['19','Science Fiction'], ['20','Ships & Watercraft'],
+    ['21','Theme Class: The Number 5'], ['22','Trucks - Articulated/Semi'],
+    ['23','Trucks - Rigid/Bobtail'], ['24','T.V & Film Vehicles']
+  ];
+  let sponsorsSha = null;
+
+  async function loadSponsors() {
+    const listEl = document.getElementById('sponsorsList');
+    listEl.textContent = 'Loading...';
+    try {
+      const file = await ghGetFile('data/sponsors.json');
+      const sponsors = file.exists ? JSON.parse(file.content) : {};
+      sponsorsSha = file.sha;
+      listEl.innerHTML = '';
+      classList.forEach(([num, title]) => {
+        const row = document.createElement('div');
+        row.className = 'sponsor-admin-row';
+        row.innerHTML = `
+          <span class="cnum">${num}</span>
+          <span class="ctitle">${title}</span>
+          <input type="text" data-class="${num}" value="${sponsors[num] || ''}" placeholder="No sponsor">
+        `;
+        listEl.appendChild(row);
+      });
+    } catch (err) {
+      listEl.textContent = 'Error loading sponsors: ' + err.message;
+    }
+  }
+
+  document.getElementById('saveSponsorsBtn').onclick = async () => {
+    const statusEl = document.getElementById('sponsorsStatus');
+    statusEl.className = 'admin-status';
+    statusEl.textContent = 'Saving...';
+    const sponsors = {};
+    document.querySelectorAll('#sponsorsList input').forEach(input => {
+      const val = input.value.trim();
+      sponsors[input.dataset.class] = val || null;
+    });
+    try {
+      const result = await ghPutFile('data/sponsors.json', JSON.stringify(sponsors, null, 2), sponsorsSha, 'Update class sponsors');
+      sponsorsSha = result.content.sha;
+      statusEl.className = 'admin-status ok';
+      statusEl.textContent = 'Saved - live on the site within about a minute.';
+    } catch (err) {
+      statusEl.className = 'admin-status error';
+      statusEl.textContent = 'Error: ' + err.message;
+    }
+  };
+
+  // ============================================================
+  // Gallery
+  // ============================================================
+  let galleryData = { highlights: {}, years: [] };
+  let gallerySha = null;
+  let currentYear = null;
+  const highlightSlots = [
+    { key: 'peoplesChoice', label: "People's Choice" },
+    { key: 'bestInShow', label: 'Best in Show' },
+    { key: 'simonBreust', label: 'Simon Breust Memorial Trophy' }
+  ];
+
+  async function loadGallery() {
+    try {
+      const file = await ghGetFile('data/gallery.json');
+      galleryData = file.exists ? JSON.parse(file.content) : { highlights: {}, years: [] };
+      if (!galleryData.highlights) galleryData.highlights = {};
+      gallerySha = file.sha;
+      if (!currentYear && galleryData.years.length > 0) {
+        currentYear = [...galleryData.years].sort((a, b) => b.year.localeCompare(a.year))[0].year;
+      }
+      renderHighlightsAdmin();
+      renderYearTabs();
+      renderPhotoGrid();
+    } catch (err) {
+      document.getElementById('galleryStatus').className = 'admin-status error';
+      document.getElementById('galleryStatus').textContent = 'Error loading gallery: ' + err.message;
+    }
+  }
+
+  function renderHighlightsAdmin() {
+    const grid = document.getElementById('highlightsAdminGrid');
+    grid.innerHTML = '';
+    highlightSlots.forEach(slot => {
+      const entry = galleryData.highlights[slot.key] || {};
+      const card = document.createElement('div');
+      card.className = 'highlight-admin-card';
+      card.innerHTML = `
+        <div class="highlight-admin-label">${slot.label}</div>
+        <div class="highlight-admin-preview">
+          ${entry.src ? `<img src="${entry.src}">` : '<span class="placeholder-mark">+</span>'}
+        </div>
+        <input type="file" accept="image/*" class="highlight-file-input">
+        <input type="text" class="highlight-caption-input" placeholder="Caption (optional)" value="${entry.caption || ''}">
+        <button class="admin-btn secondary highlight-upload-btn" style="margin-top:8px;width:100%;">Upload / Replace</button>
+      `;
+      card.querySelector('.highlight-upload-btn').onclick = () => uploadHighlight(slot.key, card);
+      grid.appendChild(card);
+    });
+  }
+
+  async function uploadHighlight(slotKey, card) {
+    const statusEl = document.getElementById('highlightsStatus');
+    const fileInput = card.querySelector('.highlight-file-input');
+    const captionInput = card.querySelector('.highlight-caption-input');
+    const btn = card.querySelector('.highlight-upload-btn');
+    const caption = captionInput.value.trim();
+
+    if (!fileInput.files.length) {
+      // No new photo chosen - just update the caption on the existing photo, if any.
+      if (galleryData.highlights[slotKey] && galleryData.highlights[slotKey].src) {
+        galleryData.highlights[slotKey].caption = caption;
+        try {
+          await saveGalleryData('Update caption for ' + slotKey);
+          statusEl.className = 'admin-status ok';
+          statusEl.textContent = 'Caption updated.';
+        } catch (err) {
+          statusEl.className = 'admin-status error';
+          statusEl.textContent = 'Error: ' + err.message;
+        }
+      } else {
+        statusEl.className = 'admin-status error';
+        statusEl.textContent = 'Choose a photo first.';
+      }
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Uploading...';
+    statusEl.className = 'admin-status';
+    statusEl.textContent = 'Resizing and uploading...';
+    try {
+      const base64 = await resizeImageFile(fileInput.files[0], 1600);
+      const filename = `highlight-${slotKey}-${Date.now()}.jpg`;
+      const path = `images/${filename}`;
+      await ghPutBinaryFile(path, base64, `Update ${slotKey} highlight photo`);
+      galleryData.highlights[slotKey] = { src: path, caption };
+      await saveGalleryData('Update ' + slotKey + ' highlight photo');
+      statusEl.className = 'admin-status ok';
+      statusEl.textContent = 'Uploaded - live on the site within about a minute.';
+      renderHighlightsAdmin();
+    } catch (err) {
+      statusEl.className = 'admin-status error';
+      statusEl.textContent = 'Error: ' + err.message;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Upload / Replace';
+    }
+  }
+
+  function renderYearTabs() {
+    const tabsEl = document.getElementById('yearTabs');
+    tabsEl.innerHTML = '';
+    const years = [...galleryData.years].sort((a, b) => b.year.localeCompare(a.year));
+    years.forEach(y => {
+      const tab = document.createElement('button');
+      tab.className = 'year-tab' + (y.year === currentYear ? ' active' : '');
+      tab.textContent = y.year;
+      tab.onclick = () => { currentYear = y.year; renderYearTabs(); renderPhotoGrid(); };
+      tabsEl.appendChild(tab);
+    });
+    if (years.length === 0) {
+      tabsEl.innerHTML = '<span style="color:var(--ink-soft);font-size:13px;">No years added yet - add one above.</span>';
+    }
+  }
+
+  function renderPhotoGrid() {
+    const grid = document.getElementById('photoGrid');
+    grid.innerHTML = '';
+    const yearEntry = galleryData.years.find(y => y.year === currentYear);
+    if (!yearEntry) return;
+    (yearEntry.photos || []).forEach((photo, idx) => {
+      const tile = document.createElement('div');
+      tile.className = 'photo-admin-tile';
+      tile.innerHTML = `
+        <img src="${photo.src}" alt="${photo.caption || ''}">
+        <button class="remove-photo-btn">Remove</button>
+        <div class="caption-edit-row">
+          <input type="text" class="caption-edit-input" value="${photo.caption || ''}" placeholder="Add a caption...">
+          <button class="caption-save-btn">Save</button>
+        </div>
+      `;
+      tile.querySelector('.remove-photo-btn').onclick = () => removePhoto(idx);
+      tile.querySelector('.caption-save-btn').onclick = () => saveCaption(idx, tile.querySelector('.caption-edit-input').value.trim());
+      grid.appendChild(tile);
+    });
+  }
+
+  async function saveCaption(idx, caption) {
+    const statusEl = document.getElementById('galleryStatus');
+    const yearEntry = galleryData.years.find(y => y.year === currentYear);
+    yearEntry.photos[idx].caption = caption;
+    try {
+      await saveGalleryData('Update photo caption');
+      statusEl.className = 'admin-status ok';
+      statusEl.textContent = 'Caption saved.';
+    } catch (err) {
+      statusEl.className = 'admin-status error';
+      statusEl.textContent = 'Error: ' + err.message;
+    }
+  }
+
+  document.getElementById('addYearBtn').onclick = () => {
+    const input = document.getElementById('newYearInput');
+    const year = input.value.trim();
+    if (!/^[0-9]{4}$/.test(year)) {
+      document.getElementById('galleryStatus').className = 'admin-status error';
+      document.getElementById('galleryStatus').textContent = 'Please enter a 4-digit year, e.g. 2024.';
+      return;
+    }
+    if (galleryData.years.some(y => y.year === year)) {
+      currentYear = year;
+      renderYearTabs();
+      renderPhotoGrid();
+      input.value = '';
+      return;
+    }
+    galleryData.years.push({ year, photos: [] });
+    currentYear = year;
+    input.value = '';
+    renderYearTabs();
+    renderPhotoGrid();
+    saveGalleryData('Add ' + year + ' gallery year');
+  };
+
+  function resizeImageFile(file, maxWidth) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const scale = Math.min(1, maxWidth / img.width);
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.round(img.width * scale);
+          canvas.height = Math.round(img.height * scale);
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+          resolve(dataUrl.split(',')[1]); // base64 only, no data: prefix
+        };
+        img.onerror = reject;
+        img.src = e.target.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  document.getElementById('uploadPhotoBtn').onclick = async () => {
+    const statusEl = document.getElementById('galleryStatus');
+    const fileInput = document.getElementById('photoFileInput');
+    const captionInput = document.getElementById('photoCaptionInput');
+    if (!currentYear) {
+      statusEl.className = 'admin-status error';
+      statusEl.textContent = 'Add or select a year first.';
+      return;
+    }
+    const files = Array.from(fileInput.files);
+    if (files.length === 0) {
+      statusEl.className = 'admin-status error';
+      statusEl.textContent = 'Choose at least one photo first.';
+      return;
+    }
+    // A typed caption only makes sense when uploading exactly one photo at a time.
+    const singleCaption = files.length === 1 ? captionInput.value.trim() : '';
+
+    const yearEntry = galleryData.years.find(y => y.year === currentYear);
+    yearEntry.photos = yearEntry.photos || [];
+
+    let uploaded = 0;
+    for (let i = 0; i < files.length; i++) {
+      statusEl.className = 'admin-status';
+      statusEl.textContent = `Uploading photo ${i + 1} of ${files.length}...`;
+      try {
+        const base64 = await resizeImageFile(files[i], 1600);
+        const filename = `${currentYear}-${Date.now()}-${i}.jpg`;
+        const path = `images/${filename}`;
+        await ghPutBinaryFile(path, base64, `Add gallery photo ${filename}`);
+        yearEntry.photos.push({ src: path, caption: singleCaption });
+        uploaded++;
+      } catch (err) {
+        statusEl.className = 'admin-status error';
+        statusEl.textContent = `Uploaded ${uploaded} of ${files.length} before an error: ${err.message}`;
+        await saveGalleryData('Add photos to ' + currentYear + ' gallery').catch(() => {});
+        renderPhotoGrid();
+        return;
+      }
+    }
+
+    try {
+      await saveGalleryData('Add ' + uploaded + ' photo(s) to ' + currentYear + ' gallery');
+      fileInput.value = '';
+      captionInput.value = '';
+      statusEl.className = 'admin-status ok';
+      statusEl.textContent = `${uploaded} photo${uploaded === 1 ? '' : 's'} uploaded - live on the site within about a minute.`;
+      renderPhotoGrid();
+    } catch (err) {
+      statusEl.className = 'admin-status error';
+      statusEl.textContent = 'Photos uploaded but saving the gallery list failed: ' + err.message;
+    }
+  };
+
+  async function removePhoto(idx) {
+    const yearEntry = galleryData.years.find(y => y.year === currentYear);
+    yearEntry.photos.splice(idx, 1);
+    renderPhotoGrid();
+    try {
+      await saveGalleryData('Remove photo from ' + currentYear + ' gallery');
+      document.getElementById('galleryStatus').className = 'admin-status ok';
+      document.getElementById('galleryStatus').textContent = 'Photo removed.';
+    } catch (err) {
+      document.getElementById('galleryStatus').className = 'admin-status error';
+      document.getElementById('galleryStatus').textContent = 'Error removing photo: ' + err.message;
+    }
+  }
+
+  async function saveGalleryData(message) {
+    const result = await ghPutFile('data/gallery.json', JSON.stringify(galleryData, null, 2), gallerySha, message);
+    gallerySha = result.content.sha;
+  }
+
+  // Auto-connect on load if settings are already saved
+  if (getSettings().token && getSettings().owner && getSettings().repo) {
+    document.getElementById('saveSettingsBtn').click();
+  }
+</script>
+
+</body>
+</html>

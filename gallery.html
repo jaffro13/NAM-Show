@@ -35,52 +35,17 @@
 
 <div class="ruler"></div>
 
-<section class="content">
+<section class="content" style="padding-bottom:0;">
   <div class="wrap">
-    <div class="section-eyebrow">2025 Show</div>
-    <h2 class="section-title">N.N.L 2025</h2>
+    <div class="section-eyebrow">Show Highlights</div>
+    <h2 class="section-title">This Year's Trophy Winners</h2>
+    <div id="highlightsGrid" class="highlights-grid"></div>
+  </div>
+</section>
 
-    <!--
-      ============================================================================
-      SETUP: replace each placeholder tile below with a real photo once you have
-      one. To do this:
-        1. Upload your photo files into an "images" folder alongside this page
-           (e.g. images/2025-01.jpg)
-        2. Replace a placeholder <div class="gallery-tile">...</div> block with:
-             <div class="gallery-tile">
-               <img src="images/2025-01.jpg" alt="Describe the photo here">
-             </div>
-        3. Add a caption underneath if you like, using:
-             <p class="gallery-caption">Best in Show - 2025</p>
-      Add as many tiles as you have photos - the grid will wrap automatically.
-      ============================================================================
-    -->
-    <div class="gallery-grid">
-      <div class="gallery-tile">
-        <span class="placeholder-mark">+</span>
-        <span class="placeholder-label">Add photo here</span>
-      </div>
-      <div class="gallery-tile">
-        <span class="placeholder-mark">+</span>
-        <span class="placeholder-label">Add photo here</span>
-      </div>
-      <div class="gallery-tile">
-        <span class="placeholder-mark">+</span>
-        <span class="placeholder-label">Add photo here</span>
-      </div>
-      <div class="gallery-tile">
-        <span class="placeholder-mark">+</span>
-        <span class="placeholder-label">Add photo here</span>
-      </div>
-      <div class="gallery-tile">
-        <span class="placeholder-mark">+</span>
-        <span class="placeholder-label">Add photo here</span>
-      </div>
-      <div class="gallery-tile">
-        <span class="placeholder-mark">+</span>
-        <span class="placeholder-label">Add photo here</span>
-      </div>
-    </div>
+<section class="content">
+  <div class="wrap" id="galleryContainer">
+    <p class="section-body">Loading gallery...</p>
   </div>
 </section>
 
@@ -111,6 +76,93 @@
     <div class="footer-bottom">&copy; 2026 Northern Area Modellers</div>
   </div>
 </footer>
+
+<script>
+  fetch('data/gallery.json?v=' + Date.now())
+    .then(r => r.json())
+    .then(data => {
+      renderHighlights(data.highlights || {});
+      renderYears(data.years || []);
+    })
+    .catch(() => {
+      document.getElementById('galleryContainer').innerHTML =
+        '<p class="section-body">Gallery couldn\'t be loaded right now - please try again shortly.</p>';
+    });
+
+  function renderHighlights(highlights) {
+    const grid = document.getElementById('highlightsGrid');
+    grid.innerHTML = '';
+    const slots = [
+      { key: 'peoplesChoice', label: "People's Choice" },
+      { key: 'bestInShow', label: 'Best in Show' },
+      { key: 'simonBreust', label: 'Simon Breust Memorial Trophy' }
+    ];
+    slots.forEach(slot => {
+      const entry = highlights[slot.key] || {};
+      const tile = document.createElement('div');
+      tile.className = 'highlight-tile';
+      if (entry.src) {
+        tile.innerHTML = `
+          <div class="highlight-photo"><img src="${entry.src}" alt="${entry.caption || slot.label}" loading="lazy"></div>
+          <div class="highlight-label">${slot.label}</div>
+          ${entry.caption ? `<div class="highlight-caption">${entry.caption}</div>` : ''}
+        `;
+      } else {
+        tile.innerHTML = `
+          <div class="highlight-photo highlight-empty"><span class="placeholder-mark">+</span></div>
+          <div class="highlight-label">${slot.label}</div>
+        `;
+      }
+      grid.appendChild(tile);
+    });
+  }
+
+  function renderYears(years) {
+    const container = document.getElementById('galleryContainer');
+    container.innerHTML = '';
+    if (years.length === 0) {
+      container.innerHTML = '<p class="section-body">No galleries added yet - check back soon!</p>';
+      return;
+    }
+    const sorted = [...years].sort((a, b) => b.year.localeCompare(a.year));
+    sorted.forEach(yearEntry => {
+      const eyebrow = document.createElement('div');
+      eyebrow.className = 'section-eyebrow';
+      eyebrow.textContent = yearEntry.year + ' Show';
+      container.appendChild(eyebrow);
+
+      const title = document.createElement('h2');
+      title.className = 'section-title';
+      title.textContent = 'N.N.L ' + yearEntry.year;
+      container.appendChild(title);
+
+      const grid = document.createElement('div');
+      grid.className = 'gallery-grid';
+      (yearEntry.photos || []).forEach(photo => {
+        const wrap = document.createElement('div');
+        const tile = document.createElement('div');
+        tile.className = 'gallery-tile';
+        const img = document.createElement('img');
+        img.src = photo.src;
+        img.alt = photo.caption || '';
+        img.loading = 'lazy';
+        tile.appendChild(img);
+        wrap.appendChild(tile);
+        if (photo.caption) {
+          const cap = document.createElement('p');
+          cap.className = 'gallery-caption';
+          cap.textContent = photo.caption;
+          wrap.appendChild(cap);
+        }
+        grid.appendChild(wrap);
+      });
+      if (!yearEntry.photos || yearEntry.photos.length === 0) {
+        grid.innerHTML = '<p class="section-body">No photos added for this year yet.</p>';
+      }
+      container.appendChild(grid);
+    });
+  }
+</script>
 
 </body>
 </html>
