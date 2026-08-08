@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Gallery - Northern Area Modellers</title>
-<meta name="description" content="Photos from past Northern Area Modellers N.N.L shows.">
+<meta name="description" content="Photos from past Northern Area Modellers shows.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -29,7 +29,7 @@
   <div class="wrap">
     <div class="eyebrow" style="text-align:center;">From The Show Floor</div>
     <h1>Gallery</h1>
-    <p>A look back at previous N.N.L shows - entries, awards and the show floor on the day.</p>
+    <p>A look back at previous N.A.M shows - entries, awards and the show floor on the day.</p>
   </div>
 </section>
 
@@ -69,6 +69,16 @@
   </div>
 </footer>
 
+<div id="lightbox" class="lightbox" style="display:none;">
+  <button class="lightbox-close" id="lightboxClose" aria-label="Close">&times;</button>
+  <button class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="Previous photo">&#10094;</button>
+  <div class="lightbox-content">
+    <img id="lightboxImg" src="" alt="">
+    <p id="lightboxCaption" class="lightbox-caption"></p>
+  </div>
+  <button class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Next photo">&#10095;</button>
+</div>
+
 <script>
   fetch('data/gallery.json?v=' + Date.now())
     .then(r => r.json())
@@ -84,6 +94,18 @@
     { key: 'simonBreust', label: 'Simon Breust Memorial Trophy' }
   ];
 
+  // Every photo shown on the page, in the order they appear, so the lightbox can step through
+  // all of them (highlights and general photos alike) regardless of which one was clicked first.
+  let allPhotos = [];
+  let currentPhotoIndex = -1;
+
+  function registerPhoto(imgEl, src, caption) {
+    const index = allPhotos.length;
+    allPhotos.push({ src, caption });
+    imgEl.style.cursor = 'pointer';
+    imgEl.onclick = () => openLightbox(index);
+  }
+
   function buildHighlightsGrid(highlights) {
     const grid = document.createElement('div');
     grid.className = 'highlights-grid';
@@ -97,6 +119,7 @@
           <div class="highlight-label">${slot.label}</div>
           ${entry.caption ? `<div class="highlight-caption">${entry.caption}</div>` : ''}
         `;
+        registerPhoto(tile.querySelector('img'), entry.src, entry.caption || slot.label);
       } else {
         tile.innerHTML = `
           <div class="highlight-photo highlight-empty"><span class="placeholder-mark">+</span></div>
@@ -111,6 +134,7 @@
   function renderYears(years) {
     const container = document.getElementById('galleryContainer');
     container.innerHTML = '';
+    allPhotos = [];
     if (years.length === 0) {
       container.innerHTML = '<p class="section-body">No galleries added yet - check back soon!</p>';
       return;
@@ -125,7 +149,7 @@
 
       const title = document.createElement('h2');
       title.className = 'section-title';
-      title.textContent = 'N.N.L ' + yearEntry.year;
+      title.textContent = 'N.A.M ' + yearEntry.year;
       container.appendChild(title);
 
       container.appendChild(buildHighlightsGrid(yearEntry.highlights));
@@ -143,6 +167,7 @@
         img.loading = 'lazy';
         tile.appendChild(img);
         wrap.appendChild(tile);
+        registerPhoto(img, photo.src, photo.caption || '');
         if (photo.caption) {
           const cap = document.createElement('p');
           cap.className = 'gallery-caption';
@@ -157,6 +182,60 @@
       container.appendChild(grid);
     });
   }
+
+  // ===================== LIGHTBOX =====================
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightboxImg');
+  const lightboxCaption = document.getElementById('lightboxCaption');
+
+  function openLightbox(index) {
+    currentPhotoIndex = index;
+    showCurrentPhoto();
+    lightbox.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox() {
+    lightbox.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  function showCurrentPhoto() {
+    const photo = allPhotos[currentPhotoIndex];
+    if (!photo) return;
+    lightboxImg.src = photo.src;
+    lightboxImg.alt = photo.caption || '';
+    lightboxCaption.textContent = photo.caption || '';
+    lightboxCaption.style.display = photo.caption ? 'block' : 'none';
+  }
+
+  function showNextPhoto() {
+    if (allPhotos.length === 0) return;
+    currentPhotoIndex = (currentPhotoIndex + 1) % allPhotos.length;
+    showCurrentPhoto();
+  }
+
+  function showPrevPhoto() {
+    if (allPhotos.length === 0) return;
+    currentPhotoIndex = (currentPhotoIndex - 1 + allPhotos.length) % allPhotos.length;
+    showCurrentPhoto();
+  }
+
+  document.getElementById('lightboxClose').onclick = closeLightbox;
+  document.getElementById('lightboxNext').onclick = showNextPhoto;
+  document.getElementById('lightboxPrev').onclick = showPrevPhoto;
+
+  // Click on the dark backdrop (not the image/caption itself) closes the lightbox.
+  lightbox.addEventListener('click', (e) => {
+    if (e.target === lightbox) closeLightbox();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (lightbox.style.display === 'none') return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowRight') showNextPhoto();
+    if (e.key === 'ArrowLeft') showPrevPhoto();
+  });
 </script>
 
 </body>
