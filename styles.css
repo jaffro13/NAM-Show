@@ -268,7 +268,7 @@ a { color: inherit; }
 .schedule-table { border: 2px solid var(--line); border-radius: 6px; overflow: hidden; margin-top: 8px; }
 .schedule-row { display: flex; padding: 13px 18px; border-bottom: 1px solid var(--line-soft); font-size: 14px; align-items: baseline; gap: 16px; }
 .schedule-row:last-child { border-bottom: none; }
-.schedule-row.highlight { background: var(--accent-soft); margin: 0 -18px; padding-left: 18px; padding-right: 18px; }
+.schedule-row:nth-child(even) { background: var(--accent-soft); }
 .schedule-row .time { font-family: var(--font-mono); font-weight: 700; color: var(--accent-ink); flex: 0 0 140px; }
 .schedule-row .what { color: var(--ink); }
 
