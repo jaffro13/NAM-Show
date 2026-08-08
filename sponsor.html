@@ -16,7 +16,7 @@
     // Forwards this page's own query string (?class=05&className=Armour...) straight through to
     // the Apps Script form, so the "Sponsor this class" button on the Classes page can just link
     // here with the class info attached, same as it would to the raw exec URL.
-    var baseUrl = 'https://script.google.com/macros/s/AKfycbx9rWcvIJVCHZPO5WJJquYe2lSLPuKaSUTWG0t7qMIXeEUlW9jbF-drUJQZFNHfkqg9/exec';
+    var baseUrl = 'https://script.google.com/macros/s/AKfycbyOcf8Iv0rb-o8pLJExALgaR36D7AQMkPFT_HMAeauAume4yxa2k_obwco-CQ_rDfUL/exec';
     var params = new URLSearchParams(window.location.search);
     params.set('mode', 'sponsor');
     document.getElementById('sponsorFrame').src = baseUrl + '?' + params.toString();
