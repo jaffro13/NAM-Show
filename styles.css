@@ -277,6 +277,7 @@ a { color: inherit; }
 .classes-grid.vertical { grid-template-columns: 1fr; max-width: 680px; }
 .class-row { display: flex; align-items: baseline; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line-soft); font-size: 14px; color: var(--ink-soft); flex-wrap: wrap; }
 .class-num { font-family: var(--font-mono); font-weight: 700; color: var(--ink); width: 22px; flex-shrink: 0; }
+.trophy-mark { font-size: 15px; width: 22px; flex-shrink: 0; text-align: center; }
 .classes-footnote { margin-top: 14px; font-size: 12px; color: var(--ink-soft); font-style: italic; }
 .classes-rules { margin-top: 18px; padding: 16px 18px; background: var(--paper-warm); border-left: 3px solid var(--accent); font-size: 13px; color: var(--ink-soft); max-width: 720px; }
 .sponsor-slot { display: inline; }

@@ -77,6 +77,14 @@
     <p class="classes-footnote">*Imagination meets Engineering, in honour of Peter Knight.</p>
     <p class="classes-footnote">***Modified diecast can be any diecast model that has been modified in some way (paint, addons, etc). If possible, please provide a photo of the original model before the modifications, to display alongside your model.</p>
     <p class="classes-rules">Models may be entered in one class only. All models are eligible for Best in Show and People's Choice. Australian subjects are automatically eligible for the Simon Breust Memorial Trophy. Trophies are awarded for 1st place in each class, People's Choice, Best in Show, and the Simon Breust Memorial Trophy. 2nd and 3rd place in each class receive a certificate.</p>
+
+    <div class="section-eyebrow" style="margin-top:36px;">Special Awards</div>
+    <h2 class="section-title" style="font-size:20px;">Sponsor a Trophy</h2>
+    <div class="classes-grid vertical" style="grid-template-columns: 1fr;">
+      <div class="class-row" data-class="bestinshow" data-title="Best in Show"><span class="trophy-mark">&#127942;</span> Best in Show<span class="sponsor-slot"></span></div>
+      <div class="class-row" data-class="peopleschoice" data-title="People's Choice"><span class="trophy-mark">&#127942;</span> People's Choice<span class="sponsor-slot"></span></div>
+      <div class="class-row" data-class="simonbreust" data-title="Simon Breust Memorial Trophy"><span class="trophy-mark">&#127942;</span> Simon Breust Memorial Trophy<span class="sponsor-slot"></span></div>
+    </div>
   </div>
 </section>
 
@@ -122,7 +130,8 @@
         } else {
           const link = document.createElement('a');
           link.className = 'sponsor-btn';
-          link.textContent = 'Sponsor this class';
+          const isNumberedClass = /^\d+$/.test(classNum);
+          link.textContent = isNumberedClass ? 'Sponsor this class' : 'Sponsor this award';
           link.href = `sponsor.html?class=${encodeURIComponent(classNum)}&className=${encodeURIComponent(title)}`;
           link.target = '_blank';
           link.rel = 'noopener';
