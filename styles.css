@@ -59,8 +59,8 @@ a { color: inherit; }
   gap: 10px;
 }
 .brand-logo {
-  width: 58px;
-  height: 58px;
+  width: 38px;
+  height: 38px;
   flex-shrink: 0;
   display: block;
 }
