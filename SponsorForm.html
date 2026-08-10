@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <style>
+    :root {
+      --navy: #171717;
+      --gold: #C8420D;
+      --accent: #C0392B;
+      --good: #1E8449;
+      --bg: #FFFFFF;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      margin: 0;
+      padding: 16px;
+      color: #222;
+    }
+    .card {
+      background: #fff;
+      border-radius: 10px;
+      padding: 20px;
+      max-width: 480px;
+      margin: 0 auto 16px auto;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+    }
+    .form-logo {
+      display: block;
+      margin: 0 auto 10px auto;
+      width: 90px;
+      height: 90px;
+    }
+    h1 {
+      font-size: 22px;
+      font-weight: bold;
+      color: var(--navy);
+      margin: 0 0 4px 0;
+      text-align: center;
+    }
+    p.event-subtitle {
+      font-size: 15px;
+      font-weight: bold;
+      color: var(--navy);
+      margin: 0 0 12px 0;
+      text-align: center;
+    }
+    p.sub {
+      color: #666;
+      margin: 0 0 16px 0;
+      font-size: 14px;
+    }
+    .class-banner {
+      background: #FEF5E7;
+      border-left: 4px solid var(--gold);
+      border-radius: 6px;
+      padding: 12px 16px;
+      font-size: 14px;
+      color: #7D6608;
+      margin-bottom: 16px;
+    }
+    label.field-label {
+      display: block;
+      font-weight: bold;
+      font-size: 13px;
+      margin-bottom: 4px;
+      color: #444;
+    }
+    input[type=text], input[type=email], input[type=tel], textarea {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border: 2px solid #ccc;
+      border-radius: 6px;
+      background: #fff;
+      font-family: inherit;
+    }
+    textarea { resize: vertical; min-height: 70px; }
+    input.invalid, textarea.invalid { border-color: var(--accent); background: #FDEDEC; }
+    .checkbox-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 13px;
+      color: #444;
+      cursor: pointer;
+      padding: 4px 0;
+      margin-top: 6px;
+    }
+    .checkbox-label input[type=checkbox] {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      cursor: pointer;
+      margin-top: 2px;
+    }
+    #website {
+      position: absolute;
+      left: -9999px;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .submit-row { display: flex; align-items: center; gap: 10px; margin-top: 6px; }
+    .submit-row .ready-tick { color: var(--good); font-size: 24px; flex-shrink: 0; opacity: 0; transition: opacity 0.15s; }
+    .submit-row .ready-tick.visible { opacity: 1; }
+    button#submitBtn {
+      flex: 1;
+      width: 100%;
+      padding: 14px;
+      font-size: 17px;
+      font-weight: bold;
+      background: var(--gold);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button#submitBtn:disabled { background: #999; }
+    #backToClassesBtn {
+      width: 100%;
+      max-width: 480px;
+      margin: 0 auto;
+      display: block;
+      padding: 16px;
+      font-size: 17px;
+      font-weight: bold;
+      background: var(--navy);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+    }
+    #closeHint {
+      max-width: 480px;
+      margin: 14px auto 0 auto;
+      text-align: center;
+      font-size: 13px;
+      color: #777;
+    }
+    #message {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 15px;
+      text-align: center;
+      display: none;
+    }
+    #message.error { background: #FDEDEC; color: var(--accent); display: block; }
+    #message.ok { background: #EAFAF1; color: var(--good); display: block; }
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 1000;
+    }
+    .confirm-card { max-width: 420px; text-align: center; }
+    .confirm-card h2 { color: var(--navy); font-size: 18px; margin: 0 0 10px 0; }
+    .confirm-card p { font-size: 14px; color: #444; margin: 0 0 18px 0; }
+    .confirm-buttons { display: flex; gap: 10px; }
+    .confirm-buttons button { flex: 1; padding: 12px; font-size: 15px; border-radius: 8px; cursor: pointer; }
+    .confirm-buttons .secondary-btn { background: #fff; border: 2px solid #ccc; color: #444; }
+    .confirm-buttons .primary-btn { background: var(--gold); border: none; color: #fff; font-weight: bold; }
+    .spinner {
+      width: 40px; height: 40px;
+      border: 5px solid #E5E8E8;
+      border-top-color: var(--good);
+      border-radius: 50%;
+      margin: 0 auto;
+      animation: spin 0.9s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <img class="form-logo" src="https://northernareamodellers.org.au/images/nam-logo.png" alt="Northern Area Modellers">
+    <h1>Northern Area Modellers</h1>
+    <p class="event-subtitle">Sponsor a Class</p>
+    <div class="class-banner" id="classBanner">Loading class details...</div>
+    <p class="sub">Fill in your details below and we'll be in touch to confirm and arrange payment. Sponsorship is $30 per class, which goes towards trophy costs and various other show expenses.</p>
+
+    <label class="field-label">Sponsor Name (this is what will be shown publicly on the class list)</label>
+    <input type="text" id="sponsorName" placeholder="e.g. Acme Hobby Supplies, or your own name">
+    <div style="height:12px"></div>
+
+    <label class="field-label">Your Name</label>
+    <input type="text" id="contactName">
+    <div style="height:12px"></div>
+
+    <label class="field-label">Email</label>
+    <input type="email" id="email">
+    <div style="height:12px"></div>
+
+    <label class="field-label">Phone</label>
+    <input type="tel" id="phone">
+    <div style="height:12px"></div>
+
+    <label class="field-label">Notes (optional)</label>
+    <textarea id="notes" placeholder="Anything else you'd like us to know"></textarea>
+    <div style="height:6px"></div>
+
+    <label class="checkbox-label">
+      <input type="checkbox" id="agreeFee">
+      I agree to pay the $30 class sponsorship fee, which goes towards trophy costs and various other show expenses.
+    </label>
+  </div>
+
+  <div class="card">
+    <input type="text" id="website" tabindex="-1" autocomplete="off">
+    <div class="submit-row">
+      <button id="submitBtn">Complete every field to continue</button>
+      <span class="ready-tick" id="readyTick">&#10003;</span>
+    </div>
+  </div>
+
+  <div id="message"></div>
+
+  <div id="confirmOverlay" class="overlay" style="display:none;">
+    <div class="card confirm-card">
+      <h2>Please Confirm</h2>
+      <p id="confirmText">Double-check your details before submitting.</p>
+      <div class="confirm-buttons">
+        <button id="confirmCancel" class="secondary-btn">Go back and check</button>
+        <button id="confirmYes" class="primary-btn">Yes, submit my application</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="loadingOverlay" class="overlay" style="display:none;">
+    <div class="card confirm-card">
+      <div class="spinner"></div>
+      <p style="margin-top:16px;">Sending your application, please wait...</p>
+    </div>
+  </div>
+
+  <script>
+    const CLASS_NUM = <?!= classNumJson ?>;
+    const CLASS_NAME = <?!= classNameJson ?>;
+    const IS_NUMBERED_CLASS = /^\d+$/.test(CLASS_NUM || '');
+
+    const classBanner = document.getElementById('classBanner');
+    if (CLASS_NUM && CLASS_NAME) {
+      classBanner.textContent = IS_NUMBERED_CLASS
+        ? `Applying to sponsor: Class ${CLASS_NUM} - ${CLASS_NAME}`
+        : `Applying to sponsor: ${CLASS_NAME}`;
+    } else {
+      classBanner.textContent = 'Class details not found - please go back and click "Sponsor this class" again.';
+    }
+
+    const sponsorNameInput = document.getElementById('sponsorName');
+    const contactNameInput = document.getElementById('contactName');
+    const emailInput = document.getElementById('email');
+    const phoneInput = document.getElementById('phone');
+    const notesInput = document.getElementById('notes');
+    const agreeFeeCheckbox = document.getElementById('agreeFee');
+    const submitBtn = document.getElementById('submitBtn');
+    const messageBox = document.getElementById('message');
+    const confirmOverlay = document.getElementById('confirmOverlay');
+    const confirmText = document.getElementById('confirmText');
+    const confirmCancel = document.getElementById('confirmCancel');
+    const confirmYes = document.getElementById('confirmYes');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+
+    function isComplete() {
+      return CLASS_NUM && sponsorNameInput.value.trim() && contactNameInput.value.trim() &&
+        emailInput.value.trim() && phoneInput.value.trim() && agreeFeeCheckbox.checked;
+    }
+
+    function updateSubmitState() {
+      const ready = isComplete();
+      submitBtn.disabled = !ready;
+      submitBtn.textContent = ready ? 'Submit my application' : 'Complete every field to continue';
+      document.getElementById('readyTick').classList.toggle('visible', ready);
+    }
+
+    [sponsorNameInput, contactNameInput, emailInput, phoneInput, notesInput].forEach(el => { el.oninput = updateSubmitState; });
+    agreeFeeCheckbox.onchange = updateSubmitState;
+
+    submitBtn.onclick = () => {
+      if (!isComplete()) {
+        showMessage('error', 'Please fill in every field and tick the fee agreement box.');
+        return;
+      }
+      if (emailInput.value.trim().indexOf('@') === -1) {
+        showMessage('error', 'Please enter a valid email address.');
+        return;
+      }
+      confirmText.textContent = `Sponsoring ${CLASS_NAME} as "${sponsorNameInput.value.trim()}". We'll be in touch at ${emailInput.value.trim()} or ${phoneInput.value.trim()} - please double-check these are correct before submitting.`;
+      confirmOverlay.style.display = 'flex';
+    };
+
+    confirmCancel.onclick = () => { confirmOverlay.style.display = 'none'; };
+
+    confirmYes.onclick = () => {
+      confirmOverlay.style.display = 'none';
+      loadingOverlay.style.display = 'flex';
+      submitBtn.disabled = true;
+      google.script.run
+        .withSuccessHandler(onResult)
+        .withFailureHandler(onFailure)
+        .submitSponsorApplication({
+          classNum: CLASS_NUM,
+          className: CLASS_NAME,
+          sponsorName: sponsorNameInput.value.trim(),
+          contactName: contactNameInput.value.trim(),
+          email: emailInput.value.trim(),
+          phone: phoneInput.value.trim(),
+          notes: notesInput.value.trim(),
+          agreedToFee: agreeFeeCheckbox.checked,
+          website: document.getElementById('website').value
+        });
+    };
+
+    function onResult(result) {
+      loadingOverlay.style.display = 'none';
+      if (result.status === 'ok') {
+        showMessage('ok', "Thanks - your application's been sent! We'll be in touch soon to confirm and arrange payment. It can take a minute or so for the class list to show your name, so don't worry if it's not there straight away.");
+        document.querySelectorAll('.card').forEach(c => { if (c.id !== 'message') c.style.display = 'none'; });
+
+        const backBtn = document.createElement('a');
+        backBtn.id = 'backToClassesBtn';
+        backBtn.href = 'https://northernareamodellers.org.au/classes.html';
+        backBtn.textContent = 'Back to Class List';
+        messageBox.insertAdjacentElement('afterend', backBtn);
+
+        const hint = document.createElement('p');
+        hint.id = 'closeHint';
+        hint.textContent = "All done? You can just close this tab instead.";
+        backBtn.insertAdjacentElement('afterend', hint);
+      } else {
+        showMessage('error', result.message);
+        updateSubmitState();
+      }
+    }
+
+    function onFailure(err) {
+      loadingOverlay.style.display = 'none';
+      showMessage('error', 'Something went wrong - please try again: ' + err.message);
+      updateSubmitState();
+    }
+
+    function showMessage(type, text) {
+      messageBox.className = type;
+      messageBox.textContent = text;
+      messageBox.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    updateSubmitState();
+  </script>
+</body>
+</html>

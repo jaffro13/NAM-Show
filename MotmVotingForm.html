@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <style>
+    :root {
+      --navy: #171717;
+      --gold: #C8420D;
+      --silver: #7F8C8D;
+      --accent: #C0392B;
+      --good: #1E8449;
+      --bg: #FFFFFF;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      margin: 0;
+      padding: 16px;
+      color: #222;
+    }
+    .card {
+      background: #fff;
+      border-radius: 10px;
+      padding: 20px;
+      max-width: 480px;
+      margin: 0 auto 16px auto;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+    }
+    .form-logo {
+      display: block;
+      margin: 0 auto 10px auto;
+      width: 90px;
+      height: 90px;
+    }
+    h1 {
+      font-size: 24px;
+      font-weight: bold;
+      color: var(--navy);
+      margin: 0 0 4px 0;
+      text-align: center;
+    }
+    p.event-subtitle {
+      font-size: 15px;
+      font-weight: bold;
+      color: var(--navy);
+      margin: 0 0 12px 0;
+      text-align: center;
+    }
+    p.sub {
+      color: #666;
+      margin: 0 0 16px 0;
+      font-size: 14px;
+    }
+    label.field-label {
+      display: block;
+      font-weight: bold;
+      font-size: 13px;
+      margin-bottom: 6px;
+      color: #444;
+    }
+    label.field-label.first { color: var(--gold); }
+    label.field-label.second { color: var(--silver); }
+    select {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border: 2px solid #ccc;
+      border-radius: 6px;
+      background: #fff;
+    }
+    select:disabled { background: #eee; color: #999; }
+    .submit-row { display: flex; align-items: center; gap: 10px; margin-top: 16px; }
+    .submit-row .ready-tick { color: var(--good); font-size: 24px; flex-shrink: 0; opacity: 0; transition: opacity 0.15s; }
+    .submit-row .ready-tick.visible { opacity: 1; }
+    button#submitBtn {
+      flex: 1;
+      width: 100%;
+      padding: 14px;
+      font-size: 17px;
+      font-weight: bold;
+      background: var(--gold);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button#submitBtn:disabled { background: #999; }
+    #newVoteBtn {
+      width: 100%;
+      padding: 16px;
+      font-size: 18px;
+      font-weight: bold;
+      background: var(--navy);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      margin-top: 16px;
+      cursor: pointer;
+    }
+    #message {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 15px;
+      text-align: center;
+      display: none;
+    }
+    #message.error { background: #FDEDEC; color: var(--accent); display: block; }
+    #message.ok { background: #EAFAF1; color: var(--good); display: block; }
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 1000;
+    }
+    .confirm-card { max-width: 420px; text-align: center; }
+    .confirm-card h2 { color: var(--navy); font-size: 18px; margin: 0 0 10px 0; }
+    .confirm-card p { font-size: 14px; color: #444; margin: 0 0 18px 0; }
+    .confirm-buttons { display: flex; gap: 10px; }
+    .confirm-buttons button { flex: 1; padding: 12px; font-size: 15px; border-radius: 8px; cursor: pointer; }
+    .confirm-buttons .secondary-btn { background: #fff; border: 2px solid #ccc; color: #444; }
+    .confirm-buttons .primary-btn { background: var(--gold); border: none; color: #fff; font-weight: bold; }
+    .spinner {
+      width: 40px; height: 40px;
+      border: 5px solid #E5E8E8;
+      border-top-color: var(--good);
+      border-radius: 50%;
+      margin: 0 auto;
+      animation: spin 0.9s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <img class="form-logo" src="https://northernareamodellers.org.au/images/nam-logo.png" alt="Northern Area Modellers">
+    <h1>Northern Area Modellers</h1>
+    <p class="event-subtitle">Model of the Month - Vote</p>
+    <p class="sub">Pick your name, then your 1st and 2nd favourite models from tonight's entries. You can't vote for your own model, and you can only vote once.</p>
+
+    <label class="field-label">Who Are You?</label>
+    <select id="voterSelect">
+      <option value="">Select your name...</option>
+    </select>
+  </div>
+
+  <div class="card">
+    <label class="field-label first">1st Favourite</label>
+    <select id="firstChoiceSelect" disabled>
+      <option value="">Select your name first...</option>
+    </select>
+    <div style="height:14px"></div>
+    <label class="field-label second">2nd Favourite</label>
+    <select id="secondChoiceSelect" disabled>
+      <option value="">Select your name first...</option>
+    </select>
+  </div>
+
+  <div class="card">
+    <div class="submit-row">
+      <button id="submitBtn">Complete your choices to continue</button>
+      <span class="ready-tick" id="readyTick">&#10003;</span>
+    </div>
+  </div>
+
+  <div id="message"></div>
+
+  <div id="confirmOverlay" class="overlay" style="display:none;">
+    <div class="card confirm-card">
+      <h2>Please Confirm</h2>
+      <p id="confirmText">Double-check your choices before submitting.</p>
+      <div class="confirm-buttons">
+        <button id="confirmCancel" class="secondary-btn">Go back and check</button>
+        <button id="confirmYes" class="primary-btn">Yes, submit my vote</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="loadingOverlay" class="overlay" style="display:none;">
+    <div class="card confirm-card">
+      <div class="spinner"></div>
+      <p style="margin-top:16px;">Submitting your vote, please wait...</p>
+    </div>
+  </div>
+
+  <script>
+    const VOTING_DATA = <?!= votingDataJson ?>; // { voters: [{name, hasVoted}], models: [{number, name, entrantName}] }
+    const VOTING_OPEN = <?!= votingOpenJson ?>;
+
+    if (!VOTING_OPEN) {
+      document.body.innerHTML = `
+        <div class="card">
+          <img class="form-logo" src="https://northernareamodellers.org.au/images/nam-logo.png" alt="Northern Area Modellers">
+    <h1>Northern Area Modellers</h1>
+          <p class="event-subtitle">Model of the Month - Vote</p>
+          <p class="sub">Voting isn't open yet - hang tight for the announcement, then reload this page.</p>
+        </div>`;
+    } else if (!VOTING_DATA.models.length) {
+      document.body.innerHTML = `
+        <div class="card">
+          <img class="form-logo" src="https://northernareamodellers.org.au/images/nam-logo.png" alt="Northern Area Modellers">
+    <h1>Northern Area Modellers</h1>
+          <p class="event-subtitle">Model of the Month - Vote</p>
+          <p class="sub">No models have been entered yet - check back once entries are in.</p>
+        </div>`;
+    } else {
+      (function () {
+        const voterSelect = document.getElementById('voterSelect');
+        const firstChoiceSelect = document.getElementById('firstChoiceSelect');
+        const secondChoiceSelect = document.getElementById('secondChoiceSelect');
+        const submitBtn = document.getElementById('submitBtn');
+        const messageBox = document.getElementById('message');
+        const confirmOverlay = document.getElementById('confirmOverlay');
+        const confirmText = document.getElementById('confirmText');
+        const confirmCancel = document.getElementById('confirmCancel');
+        const confirmYes = document.getElementById('confirmYes');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+
+        // Only people who haven't voted yet can be selected - prevents an obvious double-vote
+        // attempt client-side (the server enforces this properly regardless).
+        VOTING_DATA.voters
+          .filter(v => !v.hasVoted)
+          .forEach(v => {
+            const opt = document.createElement('option');
+            opt.value = v.name;
+            opt.textContent = v.name;
+            voterSelect.appendChild(opt);
+          });
+
+        function populateChoiceSelect(select, excludeNumbers, placeholderText) {
+          const currentValue = select.value;
+          select.innerHTML = '';
+          const placeholder = document.createElement('option');
+          placeholder.value = '';
+          placeholder.textContent = placeholderText;
+          select.appendChild(placeholder);
+          VOTING_DATA.models
+            .filter(m => m.entrantName !== voterSelect.value) // can't vote for your own model
+            .filter(m => excludeNumbers.indexOf(m.number) === -1)
+            .forEach(m => {
+              const opt = document.createElement('option');
+              opt.value = m.number;
+              opt.textContent = `${m.number} - ${m.name}`;
+              select.appendChild(opt);
+            });
+          if ([...select.options].some(o => o.value === currentValue)) {
+            select.value = currentValue;
+          }
+        }
+
+        function refreshChoiceSelects() {
+          const hasVoter = !!voterSelect.value;
+          firstChoiceSelect.disabled = !hasVoter;
+          secondChoiceSelect.disabled = !hasVoter;
+          if (!hasVoter) {
+            firstChoiceSelect.innerHTML = '<option value="">Select your name first...</option>';
+            secondChoiceSelect.innerHTML = '<option value="">Select your name first...</option>';
+            updateSubmitState();
+            return;
+          }
+          populateChoiceSelect(firstChoiceSelect, secondChoiceSelect.value ? [secondChoiceSelect.value] : [], 'Select your 1st favourite...');
+          populateChoiceSelect(secondChoiceSelect, firstChoiceSelect.value ? [firstChoiceSelect.value] : [], 'Select your 2nd favourite...');
+          updateSubmitState();
+        }
+
+        voterSelect.onchange = refreshChoiceSelects;
+        firstChoiceSelect.onchange = refreshChoiceSelects;
+        secondChoiceSelect.onchange = refreshChoiceSelects;
+
+        function isComplete() {
+          return voterSelect.value && firstChoiceSelect.value && secondChoiceSelect.value && firstChoiceSelect.value !== secondChoiceSelect.value;
+        }
+
+        function updateSubmitState() {
+          const ready = isComplete();
+          submitBtn.disabled = !ready;
+          submitBtn.textContent = ready ? 'Submit my vote' : 'Complete your choices to continue';
+          document.getElementById('readyTick').classList.toggle('visible', ready);
+        }
+
+        submitBtn.onclick = () => {
+          if (!isComplete()) {
+            showMessage('error', 'Please select your name, and two different models for 1st and 2nd favourite.');
+            return;
+          }
+          const firstText = firstChoiceSelect.options[firstChoiceSelect.selectedIndex].textContent;
+          const secondText = secondChoiceSelect.options[secondChoiceSelect.selectedIndex].textContent;
+          confirmText.textContent = `${voterSelect.value}: 1st - ${firstText}, 2nd - ${secondText}. This can't be undone once submitted.`;
+          confirmOverlay.style.display = 'flex';
+        };
+
+        confirmCancel.onclick = () => { confirmOverlay.style.display = 'none'; };
+
+        confirmYes.onclick = () => {
+          confirmOverlay.style.display = 'none';
+          loadingOverlay.style.display = 'flex';
+          submitBtn.disabled = true;
+          google.script.run
+            .withSuccessHandler(onResult)
+            .withFailureHandler(onFailure)
+            .submitMotmVote(voterSelect.value, firstChoiceSelect.value, secondChoiceSelect.value);
+        };
+
+        function onResult(result) {
+          loadingOverlay.style.display = 'none';
+          if (result.status === 'ok') {
+            // Remove the voter who just voted from the dropdown so the next person can't pick
+            // them again, without needing a real page reload (unreliable in Apps Script's frame).
+            const votedName = voterSelect.value;
+            const optToRemove = [...voterSelect.options].find(o => o.value === votedName);
+            if (optToRemove) optToRemove.remove();
+
+            showMessage('ok', 'Thanks - your vote is in!');
+            document.querySelectorAll('.card').forEach(c => { if (c.id !== 'message') c.style.display = 'none'; });
+            const newVoteBtn = document.createElement('button');
+            newVoteBtn.id = 'newVoteBtn';
+            newVoteBtn.textContent = 'Next Person Vote';
+            newVoteBtn.onclick = resetForm;
+            messageBox.insertAdjacentElement('afterend', newVoteBtn);
+          } else {
+            showMessage('error', result.message);
+            updateSubmitState();
+          }
+        }
+
+        function resetForm() {
+          voterSelect.value = '';
+          refreshChoiceSelects();
+          const newVoteBtn = document.getElementById('newVoteBtn');
+          if (newVoteBtn) newVoteBtn.remove();
+          messageBox.className = '';
+          messageBox.textContent = '';
+          messageBox.style.display = '';
+          document.querySelectorAll('.card').forEach(c => c.style.display = '');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function onFailure(err) {
+          loadingOverlay.style.display = 'none';
+          showMessage('error', 'Something went wrong - please try again: ' + err.message);
+          updateSubmitState();
+        }
+
+        function showMessage(type, text) {
+          messageBox.className = type;
+          messageBox.textContent = text;
+          messageBox.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        updateSubmitState();
+      })();
+    }
+  </script>
+</body>
+</html>
