@@ -7,7 +7,7 @@
 <meta name="robots" content="noindex, nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 <style>
   .admin-wrap { max-width: 760px; margin: 0 auto; padding: 32px 20px 80px 20px; }
@@ -22,12 +22,12 @@
     font-family: var(--font-display);
     font-size: 20px;
     text-transform: uppercase;
-    color: var(--navy);
+    color: var(--ink);
     margin-bottom: 6px;
   }
   .admin-card p.hint { font-size: 13px; color: var(--ink-soft); margin-bottom: 16px; }
   .field-row { margin-bottom: 12px; }
-  .field-row label { display: block; font-size: 12px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+  .field-row label { display: block; font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
   .field-row input[type=text], .field-row input[type=password], .field-row select {
     width: 100%;
     padding: 9px 10px;
@@ -44,12 +44,12 @@
     padding: 9px 18px;
     border-radius: 4px;
     border: none;
-    background: var(--gold);
+    background: var(--accent-btn);
     color: #12181F;
     cursor: pointer;
   }
   .admin-btn:disabled { background: #ccc; color: #777; cursor: default; }
-  .admin-btn.secondary { background: transparent; border: 2px solid var(--navy); color: var(--navy); }
+  .admin-btn.secondary { background: transparent; border: 2px solid var(--ink); color: var(--ink); }
   .admin-status { margin-top: 10px; font-size: 13px; }
   .admin-status.ok { color: var(--good); }
   .admin-status.error { color: #C0392B; }
@@ -57,7 +57,7 @@
   .conn-badge.connected { background: #D5F5E3; color: #1E8449; }
   .conn-badge.disconnected { background: #FADBD8; color: #C0392B; }
   .sponsor-admin-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid #EDEFF0; }
-  .sponsor-admin-row .cnum { font-family: var(--font-mono); font-weight: 700; color: var(--navy); width: 26px; flex-shrink: 0; }
+  .sponsor-admin-row .cnum { font-family: var(--font-mono); font-weight: 700; color: var(--ink); width: 26px; flex-shrink: 0; }
   .sponsor-admin-row .ctitle { flex: 0 0 220px; font-size: 13px; color: var(--ink-soft); }
   .sponsor-admin-row input { flex: 1; padding: 6px 8px; font-size: 13px; border: 1px solid #C9D2D8; border-radius: 4px; }
   .year-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
@@ -70,12 +70,12 @@
     font-size: 13px;
     cursor: pointer;
   }
-  .year-tab.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .year-tab.active { background: var(--ink); color: #fff; border-color: var(--ink); }
   .year-highlights-heading {
     font-family: var(--font-display);
     font-size: 15px;
     text-transform: uppercase;
-    color: var(--navy);
+    color: var(--ink);
     margin: 20px 0 6px 0;
     padding-top: 16px;
     border-top: 1px solid #EDEFF0;
@@ -92,10 +92,10 @@
   .upload-row .field-row { margin-bottom: 0; flex: 1; min-width: 160px; }
   .highlights-admin-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 16px; }
   .highlight-admin-card { border: 1px solid #DADFE3; border-radius: 6px; padding: 12px; }
-  .highlight-admin-label { font-size: 12px; font-weight: 700; color: var(--navy); margin-bottom: 8px; text-align: center; }
+  .highlight-admin-label { font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 8px; text-align: center; }
   .highlight-admin-preview {
     aspect-ratio: 4/3;
-    background: #F4F6F7;
+    background: #FFFFFF;
     border: 1px dashed #C9D2D8;
     border-radius: 4px;
     display: flex;
@@ -111,7 +111,7 @@
   .caption-edit-row { display: flex; gap: 4px; padding: 6px; background: #F8F9FA; }
   .caption-edit-input { flex: 1; padding: 4px 6px; font-size: 11px; border: 1px solid #C9D2D8; border-radius: 3px; }
   .caption-save-btn {
-    background: var(--navy); color: #fff; border: none; border-radius: 3px;
+    background: var(--ink); color: #fff; border: none; border-radius: 3px;
     font-size: 11px; padding: 4px 8px; cursor: pointer;
   }
   .photo-admin-tile { display: flex; flex-direction: column; }
@@ -121,7 +121,7 @@
 
 <header class="site-header">
   <div class="wrap nav-row">
-    <a href="index.html" class="brand">Northern Area <span>Modellers</span></a>
+    <a href="index.html" class="brand"><img src="images/nam-logo.png" alt="Northern Area Modellers" class="brand-logo">Northern Area <span>Modellers</span></a>
     <nav class="main-nav">
       <a href="index.html">Back to Site</a>
     </nav>
@@ -130,7 +130,7 @@
 
 <div class="admin-wrap">
 
-  <h1 style="font-family:var(--font-display);color:var(--navy);text-transform:uppercase;margin:24px 0 4px 0;">Site Admin</h1>
+  <h1 style="font-family:var(--font-display);color:var(--ink);text-transform:uppercase;margin:24px 0 4px 0;">Site Admin</h1>
   <p style="color:var(--ink-soft);font-size:14px;margin-bottom:24px;">Manage gallery photos and class sponsors. Changes go live on the site within about a minute.</p>
 
   <!-- ================= CONNECTION SETTINGS ================= -->
