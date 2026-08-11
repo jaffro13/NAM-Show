@@ -2,7 +2,12 @@
   "years": [
     {
       "year": "2024",
-      "highlights": {},
+      "highlights": {
+        "bestInShow": {
+          "src": "images/highlight-2024-bestInShow-1786456743661.jpg",
+          "caption": ""
+        }
+      },
       "photos": [
         {
           "src": "images/2024-1785994912188-0.jpg",
