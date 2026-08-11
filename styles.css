@@ -302,7 +302,11 @@ a { color: inherit; }
 .sponsorship-info { background: var(--paper-warm); border-left: 3px solid var(--accent); border-radius: 4px; padding: 14px 18px; font-size: 14px; color: var(--ink-soft); max-width: 720px; }
 
 .event-details-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
-.detail-card { border: 2px solid var(--ink); border-radius: 8px; padding: 16px 18px; }
+.detail-card {
+  display: block; border: 2px solid var(--ink); border-radius: 8px; padding: 16px 18px;
+  text-decoration: none; color: inherit; transition: background 0.15s, border-color 0.15s;
+}
+.detail-card:hover { background: var(--paper-warm); border-color: var(--accent-btn); }
 .detail-card .dc-label { font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: var(--accent-ink); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
 .detail-card .dc-value { font-family: var(--font-display); font-size: 17px; text-transform: uppercase; line-height: 1.25; }
 .detail-card .dc-note { font-size: 12px; color: var(--ink-soft); margin-top: 4px; }
