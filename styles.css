@@ -145,6 +145,7 @@ a { color: inherit; }
 .btn-outline { background: #fff; color: var(--ink); }
 .btn-outline-dark { background: #fff; color: var(--ink); border: 3px solid var(--line); font-family: var(--font-mono); font-weight: 700; text-transform: uppercase; font-size: 13px; letter-spacing: 0.04em; padding: 12px 22px; cursor: pointer; }
 .btn-outline-dark:hover { background: var(--ink); color: #fff; }
+.btn.active-page { border-color: var(--accent-btn); color: var(--accent-ink); }
 
 /* ---------- Trophy photo row (hero + gallery) ---------- */
 .photo-row {
