@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QR Codes - Northern Area Modellers</title>
+<meta name="description" content="All the show's QR code links in one place, for anyone who can't scan a QR code.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+  .qr-btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .qr-btn {
+    display: block; border: 3px solid var(--ink); border-radius: 8px;
+    padding: 22px 20px; text-decoration: none; color: var(--ink); background: #fff;
+    transition: background 0.15s, color 0.15s;
+  }
+  .qr-btn:hover { background: var(--ink); color: #fff; }
+  .qr-btn:hover .qr-btn-desc { color: #ddd; }
+  .qr-btn-title { font-family: var(--font-display); font-size: 20px; text-transform: uppercase; margin-bottom: 6px; }
+  .qr-btn-desc { font-size: 13px; color: var(--ink-soft); }
+  @media (max-width: 640px) { .qr-btn-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap nav-row">
+    <a href="index.html" class="brand"><img src="images/nam-logo.png" alt="Northern Area Modellers" class="brand-logo">Northern Area <span>Modellers</span></a>
+    <nav class="main-nav">
+      <a href="index.html">Home</a>
+      <a href="show.html">This Year's Show</a>
+      <a href="swap-and-sell.html">Swap &amp; Sell</a>
+      <a href="meeting.html">Monthly Meeting</a>
+      <a href="events.html">Events</a>
+    </nav>
+  </div>
+</header>
+
+<section class="content" style="padding-bottom:0;">
+  <div class="wrap">
+    <div class="hero-actions" style="margin-bottom:0;">
+      <a href="show.html" class="btn">Show Home</a>
+      <a href="getting-there.html" class="btn">Getting There</a>
+      <a href="classes.html" class="btn">Classes</a>
+      <a href="gallery.html" class="btn">Gallery</a>
+      <a href="buttons.html" class="btn active-page">QR Codes</a>
+      <a href="entry.html" class="btn btn-primary">Enter Now</a>
+    </div>
+  </div>
+</section>
+
+<section class="page-header">
+  <div class="wrap">
+    <div class="eyebrow" style="text-align:center;">Can't Scan A QR Code?</div>
+    <h1>All The Show's Links</h1>
+    <p>No worries at all - just tap the button for what you need below. No typing, no scanning required.</p>
+  </div>
+</section>
+
+<div class="ruler"></div>
+
+<section class="content">
+  <div class="wrap">
+    <div class="qr-btn-grid">
+      <a href="entry.html" class="qr-btn">
+        <div class="qr-btn-title">Enter Your Models</div>
+        <div class="qr-btn-desc">Walk-in entries on the day</div>
+      </a>
+      <a href="voting.html" class="qr-btn">
+        <div class="qr-btn-title">Cast Your Vote</div>
+        <div class="qr-btn-desc">Entrants only - you'll need your code</div>
+      </a>
+      <a href="spectator.html" class="qr-btn">
+        <div class="qr-btn-title">People's Choice</div>
+        <div class="qr-btn-desc">Vote for your favourite model</div>
+      </a>
+      <a href="feedback.html" class="qr-btn">
+        <div class="qr-btn-title">Suggestion Box</div>
+        <div class="qr-btn-desc">Anonymous show feedback</div>
+      </a>
+      <a href="classes.html" class="qr-btn">
+        <div class="qr-btn-title">Sponsor a Class</div>
+        <div class="qr-btn-desc">Browse and sponsor - $30 per class</div>
+      </a>
+      <a href="show.html" class="qr-btn">
+        <div class="qr-btn-title">Show Home</div>
+        <div class="qr-btn-desc">Everything about this year's show</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="content" style="padding-top:0;">
+  <div class="wrap">
+    <div class="sponsorship-info">
+      If someone at the show is asking for help with a QR code, this page has everything they need - just hand them your phone open to this page, or point them to it directly.
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">Northern Area Modellers</div>
+        <p class="footer-note">Modelling Competition and Swap &amp; Sell 2026, Epping Memorial Community Hall.</p>
+      </div>
+      <div class="footer-links">
+        <a href="show.html">Show Home</a>
+        <a href="getting-there.html">Getting There</a>
+        <a href="classes.html">Classes</a>
+        <a href="gallery.html">Gallery</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
