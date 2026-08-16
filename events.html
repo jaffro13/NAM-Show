@@ -9,6 +9,85 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<style>
+  .cal-year-nav {
+    display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 20px;
+  }
+  .cal-year-nav button {
+    font-family: var(--font-mono); font-weight: 700; font-size: 13px; text-transform: uppercase;
+    background: #fff; border: 2px solid var(--line); border-radius: 6px; padding: 8px 14px; cursor: pointer;
+  }
+  .cal-year-nav button:hover { background: var(--ink); color: #fff; }
+  .cal-year-label { font-family: var(--font-display); font-size: 22px; min-width: 80px; text-align: center; }
+
+  .cal-large {
+    border: 2px solid var(--line); border-radius: 10px; overflow: hidden; margin-bottom: 40px;
+    max-width: 620px; margin-left: auto; margin-right: auto;
+  }
+  .cal-large-header { background: var(--ink); color: #fff; padding: 18px 20px; text-align: center; }
+  .cal-large-header .month-name { font-family: var(--font-display); font-size: 30px; text-transform: uppercase; }
+  .cal-large-header .year-name { font-family: var(--font-mono); font-size: 14px; color: #ccc; margin-top: 2px; }
+  .cal-large-grid { display: grid; grid-template-columns: repeat(7, 1fr); }
+  .cal-large-grid .weekday-label {
+    font-family: var(--font-mono); font-size: 11px; font-weight: 700; text-transform: uppercase;
+    text-align: center; padding: 8px 0; color: var(--ink-soft); background: var(--paper-warm);
+    border-bottom: 2px solid var(--line);
+  }
+  .cal-large-day {
+    aspect-ratio: 1; border-right: 1px solid var(--line-soft); border-bottom: 1px solid var(--line-soft);
+    padding: 6px; position: relative; display: flex; flex-direction: column;
+  }
+  .cal-large-grid .cal-large-day:nth-child(7n) { border-right: none; }
+  .cal-large-day .day-num { font-family: var(--font-mono); font-size: 14px; font-weight: 700; }
+  .cal-large-day.blank { background: var(--paper-warm); }
+  .cal-large-day.has-event { background: var(--accent-soft); cursor: pointer; }
+  .cal-large-day.has-event:hover { background: var(--accent); }
+  .cal-large-day.has-event:hover .day-num, .cal-large-day.has-event:hover .event-dot-label { color: #fff; }
+  .cal-large-day.today .day-num {
+    background: var(--accent-btn); color: #fff; border-radius: 50%; width: 22px; height: 22px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .cal-large-day .event-dot-label {
+    font-size: 9px; color: var(--accent-ink); font-weight: 700; margin-top: 2px; line-height: 1.2;
+    overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  }
+
+  .cal-mini-grid-outer { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  @media (max-width: 800px) { .cal-mini-grid-outer { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 480px) { .cal-mini-grid-outer { grid-template-columns: 1fr; } }
+  .cal-mini { border: 2px solid var(--line); border-radius: 8px; overflow: hidden; cursor: pointer; background: #fff; }
+  .cal-mini:hover { border-color: var(--accent-btn); }
+  .cal-mini.active-month { border-color: var(--accent-btn); box-shadow: 0 0 0 2px var(--accent-btn); }
+  .cal-mini-header {
+    font-family: var(--font-mono); font-size: 12px; font-weight: 700; text-transform: uppercase;
+    text-align: center; padding: 8px 0; background: var(--paper-warm); border-bottom: 1px solid var(--line-soft);
+  }
+  .cal-mini-grid { display: grid; grid-template-columns: repeat(7, 1fr); padding: 6px; gap: 2px; }
+  .cal-mini-day {
+    aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-family: var(--font-mono); border-radius: 3px;
+  }
+  .cal-mini-day.has-event { background: var(--accent-soft); color: var(--accent-ink); font-weight: 700; }
+  .cal-mini-day.today { outline: 2px solid var(--accent-btn); }
+  .cal-mini-day.blank { visibility: hidden; }
+
+  .event-popup-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100;
+    align-items: center; justify-content: center; padding: 20px;
+  }
+  .event-popup-overlay.open { display: flex; }
+  .event-popup { background: #fff; border-radius: 10px; padding: 24px; max-width: 380px; width: 100%; border: 2px solid var(--line); }
+  .event-popup .popup-date { font-family: var(--font-mono); font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--accent-ink); margin-bottom: 8px; }
+  .event-popup .popup-event { margin-bottom: 14px; }
+  .event-popup .popup-event:last-child { margin-bottom: 0; }
+  .event-popup .popup-title { font-family: var(--font-display); font-size: 17px; margin-bottom: 4px; }
+  .event-popup .popup-desc { font-size: 14px; color: var(--ink-soft); line-height: 1.5; }
+  .event-popup .popup-close {
+    margin-top: 16px; width: 100%; font-family: var(--font-mono); font-weight: 700; font-size: 12px;
+    text-transform: uppercase; padding: 10px; border: 2px solid var(--line); border-radius: 6px; background: #fff; cursor: pointer;
+  }
+  .event-popup .popup-close:hover { background: var(--ink); color: #fff; }
+</style>
 </head>
 <body>
 
@@ -29,41 +108,51 @@
   <div class="wrap">
     <div class="eyebrow" style="text-align:center;">What's On</div>
     <h1>Upcoming Events</h1>
-    <p>Everything on the club calendar, in one place - coming soon.</p>
+    <p>Everything on the club calendar, in one place. Click a highlighted day for details.</p>
   </div>
 </section>
 
 <div class="ruler"></div>
 
-<section class="content">
+<section class="content" style="padding-bottom:0;">
   <div class="wrap">
     <div class="event-details-grid">
-      <div class="detail-card">
+      <a class="detail-card" href="show.html">
         <div class="dc-label">This Year's Show</div>
         <div class="dc-value">Modelling Competition</div>
-        <div class="dc-note">Sunday 13 September 2026 &middot; <a href="show.html">Details &rarr;</a></div>
-      </div>
-      <div class="detail-card">
+        <div class="dc-note">Sunday 13 September 2026</div>
+      </a>
+      <a class="detail-card" href="swap-and-sell.html">
         <div class="dc-label">Coming Up</div>
         <div class="dc-value">Model Kit Swap &amp; Sell</div>
-        <div class="dc-note">Saturday 28 November 2026 &middot; <a href="swap-and-sell.html">Details &rarr;</a></div>
-      </div>
-      <div class="detail-card">
+        <div class="dc-note">Saturday 28 November 2026</div>
+      </a>
+      <a class="detail-card" href="meeting.html">
         <div class="dc-label">Every Month</div>
         <div class="dc-value">Monthly Meeting</div>
-        <div class="dc-note">Third Saturday of every month &middot; <a href="meeting.html">Details &rarr;</a></div>
-      </div>
+        <div class="dc-note">Third Saturday of every month</div>
+      </a>
     </div>
   </div>
 </section>
 
-<section class="content" style="padding-top:0;">
+<section class="content">
   <div class="wrap">
-    <div class="sponsorship-info">
-      This page is a work in progress - a full calendar of club meetings and events is coming soon. For now, the cards above cover everything currently on the books.
+    <div id="loadingMsg" class="panel-hint" style="text-align:center;">Loading calendar...</div>
+    <div id="calLarge"></div>
+
+    <div class="cal-year-nav">
+      <button id="prevYearBtn">&larr; Prev Year</button>
+      <div class="cal-year-label" id="yearLabel"></div>
+      <button id="nextYearBtn">Next Year &rarr;</button>
     </div>
+    <div class="cal-mini-grid-outer" id="calMiniGrid"></div>
   </div>
 </section>
+
+<div class="event-popup-overlay" id="popupOverlay">
+  <div class="event-popup" id="popupContent"></div>
+</div>
 
 <footer class="site-footer">
   <div class="wrap">
@@ -82,6 +171,170 @@
     </div>
   </div>
 </footer>
+
+<script>
+  const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const WEEKDAY_LABELS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+
+  const today = new Date();
+  let eventsData = [];
+  let enlargedYear = today.getFullYear();
+  let enlargedMonth = today.getMonth();
+  let viewingYear = today.getFullYear();
+
+  function dateStr(year, month, day) {
+    return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+  }
+
+  function getEventsForDate(ds) {
+    return eventsData.filter(e => e.date === ds);
+  }
+
+  function buildWeeks(year, month) {
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    let startWeekday = new Date(year, month, 1).getDay();
+    startWeekday = (startWeekday + 6) % 7;
+
+    const cells = [];
+    for (let i = 0; i < startWeekday; i++) cells.push(null);
+    for (let d = 1; d <= daysInMonth; d++) {
+      const ds = dateStr(year, month, d);
+      cells.push({ day: d, dateStr: ds, events: getEventsForDate(ds) });
+    }
+    while (cells.length % 7 !== 0) cells.push(null);
+
+    const weeks = [];
+    for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7));
+    return weeks;
+  }
+
+  function isToday(year, month, day) {
+    return year === today.getFullYear() && month === today.getMonth() && day === today.getDate();
+  }
+
+  function renderLargeCalendar() {
+    const weeks = buildWeeks(enlargedYear, enlargedMonth);
+    let html = `
+      <div class="cal-large">
+        <div class="cal-large-header">
+          <div class="month-name">${MONTH_NAMES[enlargedMonth]}</div>
+          <div class="year-name">${enlargedYear}</div>
+        </div>
+        <div class="cal-large-grid">
+          ${WEEKDAY_LABELS.map(w => `<div class="weekday-label">${w}</div>`).join('')}
+    `;
+    weeks.forEach(week => {
+      week.forEach(cell => {
+        if (!cell) {
+          html += `<div class="cal-large-day blank"></div>`;
+        } else {
+          const hasEvent = cell.events.length > 0;
+          const todayClass = isToday(enlargedYear, enlargedMonth, cell.day) ? ' today' : '';
+          html += `
+            <div class="cal-large-day${hasEvent ? ' has-event' : ''}${todayClass}" ${hasEvent ? `data-date="${cell.dateStr}"` : ''}>
+              <span class="day-num">${cell.day}</span>
+              ${hasEvent ? `<span class="event-dot-label">${cell.events.map(e => e.title).join(', ')}</span>` : ''}
+            </div>
+          `;
+        }
+      });
+    });
+    html += `</div></div>`;
+    document.getElementById('calLarge').innerHTML = html;
+
+    document.querySelectorAll('.cal-large-day.has-event').forEach(el => {
+      el.onclick = () => showPopup(el.dataset.date);
+    });
+  }
+
+  function renderMiniCalendar(year, month) {
+    const weeks = buildWeeks(year, month);
+    const isActive = year === enlargedYear && month === enlargedMonth;
+    let html = `
+      <div class="cal-mini${isActive ? ' active-month' : ''}" data-year="${year}" data-month="${month}">
+        <div class="cal-mini-header">${MONTH_NAMES[month].slice(0, 3)}</div>
+        <div class="cal-mini-grid">
+    `;
+    weeks.forEach(week => {
+      week.forEach(cell => {
+        if (!cell) {
+          html += `<div class="cal-mini-day blank">-</div>`;
+        } else {
+          const hasEvent = cell.events.length > 0;
+          const todayClass = isToday(year, month, cell.day) ? ' today' : '';
+          html += `<div class="cal-mini-day${hasEvent ? ' has-event' : ''}${todayClass}">${cell.day}</div>`;
+        }
+      });
+    });
+    html += `</div></div>`;
+    return html;
+  }
+
+  function renderMiniGrid() {
+    document.getElementById('yearLabel').textContent = viewingYear;
+    let html = '';
+    for (let m = 0; m < 12; m++) {
+      html += renderMiniCalendar(viewingYear, m);
+    }
+    document.getElementById('calMiniGrid').innerHTML = html;
+
+    document.querySelectorAll('.cal-mini').forEach(el => {
+      el.onclick = () => {
+        enlargedYear = Number(el.dataset.year);
+        enlargedMonth = Number(el.dataset.month);
+        renderLargeCalendar();
+        renderMiniGrid();
+        document.getElementById('calLarge').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      };
+    });
+  }
+
+  function showPopup(ds) {
+    const events = getEventsForDate(ds);
+    if (events.length === 0) return;
+    const d = new Date(ds + 'T00:00:00');
+    const niceDate = d.toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
+    let html = `<div class="popup-date">${niceDate}</div>`;
+    events.forEach(e => {
+      html += `
+        <div class="popup-event">
+          <div class="popup-title">${e.title}</div>
+          ${e.description ? `<div class="popup-desc">${e.description}</div>` : ''}
+        </div>
+      `;
+    });
+    html += `<button class="popup-close" id="popupCloseBtn">Close</button>`;
+    document.getElementById('popupContent').innerHTML = html;
+    document.getElementById('popupCloseBtn').onclick = closePopup;
+    document.getElementById('popupOverlay').classList.add('open');
+  }
+
+  function closePopup() {
+    document.getElementById('popupOverlay').classList.remove('open');
+  }
+  document.getElementById('popupOverlay').onclick = (e) => {
+    if (e.target.id === 'popupOverlay') closePopup();
+  };
+
+  document.getElementById('prevYearBtn').onclick = () => { viewingYear--; renderMiniGrid(); };
+  document.getElementById('nextYearBtn').onclick = () => { viewingYear++; renderMiniGrid(); };
+
+  fetch('data/events.json')
+    .then(res => res.ok ? res.json() : { events: [] })
+    .then(data => {
+      eventsData = data.events || [];
+      document.getElementById('loadingMsg').style.display = 'none';
+      renderLargeCalendar();
+      renderMiniGrid();
+    })
+    .catch(() => {
+      eventsData = [];
+      document.getElementById('loadingMsg').textContent = "Couldn't load the calendar right now - please try again later.";
+      renderLargeCalendar();
+      renderMiniGrid();
+    });
+</script>
 
 </body>
 </html>
