@@ -320,7 +320,7 @@
   document.getElementById('prevYearBtn').onclick = () => { viewingYear--; renderMiniGrid(); };
   document.getElementById('nextYearBtn').onclick = () => { viewingYear++; renderMiniGrid(); };
 
-  fetch('data/events.json')
+  fetch('data/events.json', { cache: 'no-store' })
     .then(res => res.ok ? res.json() : { events: [] })
     .then(data => {
       eventsData = data.events || [];
